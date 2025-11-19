@@ -1,0 +1,77 @@
+extends Object
+
+class_name GameState
+
+signal state_changed(id, x, y, face, front, state)
+
+# Signal stuff when changes
+class PlayerState:
+	enum States {MOVING, TRAPPED, DASH, DEAD}
+	var id: int
+	var x: int
+	var y: int
+	var face: int
+	var front: int
+	var state: int
+
+	func _init(id_, x_, y_):
+		self.id = id_
+		self.x = x_
+		self.y = y_
+		self.state = States.MOVING
+		self.face = 1
+		self.front = 0
+
+
+var players: Array
+
+func _init():
+	self.players = []
+
+
+func getPlayerIds () -> Array:
+	var ids = []
+	for player in self.players:
+		ids.push_back(player.id)
+	return ids
+
+func createPlayer(x_, y_):
+	var id = self.players.size()
+	var newPlayer = PlayerState.new(id, x_, y_)
+	self.players.push_back(newPlayer)
+	return id
+
+func getPlayer(id):
+	return self.players[id]
+
+
+func setPlayerState(
+		id: int, 
+		x = null,
+		y = null,
+		state = null,
+		face = null,
+		front = null
+	):
+	var p = self.players[id]
+	print("STATE: %d  %d"% [x, y])
+	p.x = x if x != null else p.x
+	p.y = y if y != null else p.y
+	p.state = state if state != null else p.state
+	p.face = face if face != null else p.face
+	p.front = front if front != null else p.front
+	state_changed.emit(id, p.x, p.y, p.state, p.face, p.front)
+
+## Returns player state, introduce the player id to query it!
+## Returns an array as: [br]
+## [code] [id, x, y, state, face, front] [/code]
+func getPlayerState(id):
+	var p = self.players[id]
+	return [p.id, p.x, p.y, p.state, p.face, p.front]
+
+func print():
+	print("CURRENT STATE")
+	for p in self.players:
+		print("%d) x: %d	y: %d	s: %d	face: %d	front: %d"\
+			% [p.id, p.x, p.y, p.state, p.face, p.front]
+		)
