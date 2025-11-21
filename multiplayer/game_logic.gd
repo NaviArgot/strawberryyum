@@ -115,7 +115,12 @@ func _simulate ():
 						target.count = 0
 						target.x = nextX
 						target.y = nextY
-			# TODO check for dead conditions
+				# If it's not dashing stop the player
+				else:
+					player.steps = player.count
+					nextX = player.x
+					nextY = player.y
+			# TODO check for death conditions
 			# Update players position
 			player.x = nextX
 			player.y = nextY
