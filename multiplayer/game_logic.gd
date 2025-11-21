@@ -59,10 +59,10 @@ func perform ():
 	var action: Actions
 	# Initialize the data structure to perform the simulation
 	for id in ids:
-		direction = 0
 		steps = 0
 		state = self.gamestate.getPlayerState(id)
 		action = self.playerActions[id]
+		direction = state[3]
 		match action:
 			Actions.UP:
 				direction = GameState.PlayerState.Dir.UP
@@ -113,8 +113,8 @@ func _simulate ():
 					# Otherwise push the target
 					else:
 						target.count = 0
-						target.x = nextX
-						target.y = nextY
+						target.x += self.moveTrans[player.dir][0]
+						target.y += self.moveTrans[player.dir][1]
 				# If it's not dashing stop the player
 				else:
 					player.steps = player.count

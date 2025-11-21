@@ -6,8 +6,11 @@ var controllerToPlayer: Dictionary[int, int]
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
 
+var counter
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	counter = 0
 	self.gamestate = GameState.new()
 	self.playerIds = []
 	self.controllerToPlayer = {}
@@ -19,6 +22,10 @@ func _ready() -> void:
 	add_child(self.puppeteer)
 
 func _receiveInput ():
+	if counter > 0:
+		counter -= 1
+		return
+	counter = 3
 	if Input.is_action_pressed("move_up"):
 		self.gamelogic.queueAction(
 			self.playerIds[0],
@@ -38,6 +45,11 @@ func _receiveInput ():
 		self.gamelogic.queueAction(
 			self.playerIds[0],
 			GameLogic.Actions.RIGHT
+		)
+	elif Input.is_action_pressed("dash"):
+		self.gamelogic.queueAction(
+			self.playerIds[0],
+			GameLogic.Actions.DASH
 		)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
