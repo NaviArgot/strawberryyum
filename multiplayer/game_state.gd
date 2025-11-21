@@ -2,7 +2,7 @@ extends Object
 
 class_name GameState
 
-signal state_changed(id, x, y, face, front, state)
+signal state_changed(id, x, y, dir, state, face, front)
 
 # Signal stuff when changes
 class PlayerState:
@@ -64,7 +64,7 @@ func setPlayerState(
 	p.state = state if state != null else p.state
 	p.face = face if face != null else p.face
 	p.front = front if front != null else p.front
-	state_changed.emit(id, p.x, p.y, p.state, p.face, p.front)
+	state_changed.emit(id, p.x, p.y, p.dir, p.state, p.face, p.front)
 
 ## Returns player state, introduce the player id to query it!
 ## Returns an array as: [br]

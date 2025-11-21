@@ -129,6 +129,7 @@ func _updateState():
 		var newFront: int = state[6]
 		# Update face value
 		for i in player.steps:
+			print("Face %d front %d" % [newFace, newFront])
 			var value = DieSim.turnDie(newFace, newFront, player.dir)
 			newFace = value[0]
 			newFront = value[1]

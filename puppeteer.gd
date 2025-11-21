@@ -21,5 +21,6 @@ func _init(gamestate_) -> void:
 		add_child(player)
 	self.gamestate.state_changed.connect(_on_state_changed)
 
-func _on_state_changed(id, x, y, face, front, state):
+func _on_state_changed(id, x, y, dir, state, face, front):
 	self.visuals[id].setPos(x, y)
+	self.visuals[id].setFace(face)

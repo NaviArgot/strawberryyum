@@ -45,5 +45,5 @@ static var transitions = {
 static func turnDie (currFace: int, currFront: int, direction: int):
 	var targetEdge := (currFront + direction) % 4
 	var nextFace = transitions[currFace][targetEdge].face
-	var nextFront = currFront + transitions[currFace][targetEdge].addToFront
+	var nextFront = (currFront + transitions[currFace][targetEdge].addToFront) % 4
 	return [nextFace, nextFront]

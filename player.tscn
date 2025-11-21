@@ -9,6 +9,13 @@
 [node name="Player" type="Node3D"]
 script = ExtResource("1_4flbx")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_sh265")
 surface_material_override/0 = SubResource("StandardMaterial3D_4flbx")
+
+[node name="DebugData" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.111672, 0)
+billboard = 1
+text = "Habibi"
+font_size = 100
+outline_size = 30

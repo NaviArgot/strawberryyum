@@ -12,7 +12,7 @@ script = ExtResource("1_7y1jj")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.86523896, 0.5013597, 0, -0.5013597, 0.86523896, 0, 10.695364, 15.89424)
 projection = 1
-size = 23.749502
+size = 14.713802
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_7y1jj")
