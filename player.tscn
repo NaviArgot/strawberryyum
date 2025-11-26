@@ -1,17 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmmagp0lo3w6f"]
+[gd_scene load_steps=3 format=3 uid="uid://dmmagp0lo3w6f"]
 
 [ext_resource type="Script" uid="uid://cliynvs74op82" path="res://player.gd" id="1_4flbx"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_sh265"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4flbx"]
+[ext_resource type="PackedScene" uid="uid://cwg6qu1qkakeb" path="res://assets/berrycube.glb" id="2_onrkg"]
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_4flbx")
-
-[node name="Mesh" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_sh265")
-surface_material_override/0 = SubResource("StandardMaterial3D_4flbx")
 
 [node name="DebugData" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.111672, 0)
@@ -19,3 +12,6 @@ billboard = 1
 text = "Habibi"
 font_size = 100
 outline_size = 30
+
+[node name="Mesh" parent="." instance=ExtResource("2_onrkg")]
+transform = Transform3D(-2.1855694e-08, 0.5, 2.1855694e-08, 0, -2.1855694e-08, 0.5, 0.5, 2.1855694e-08, 9.553427e-16, 0, 0, 0)

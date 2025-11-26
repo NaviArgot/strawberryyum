@@ -58,13 +58,21 @@ func setPlayerState(
 		front = null
 	):
 	var p = self.players[id]
-	p.x = x if x != null else p.x
-	p.y = y if y != null else p.y
-	p.dir = dir if dir != null else p.dir
-	p.state = state if state != null else p.state
-	p.face = face if face != null else p.face
-	p.front = front if front != null else p.front
-	state_changed.emit(id, p.x, p.y, p.dir, p.state, p.face, p.front)
+	var properties = ["x", "y", "dir", "state", "face", "front"]
+	var values = [x, y, dir, state, face, front]
+	var changed: bool = false
+	for i in properties.size():
+		changed = _updateState(p, properties[i], values[i]) or changed
+	if changed:
+		state_changed.emit(id, p.x, p.y, p.dir, p.state, p.face, p.front)
+
+func _updateState (player, property, value) -> bool:
+	var changed: bool = false
+	if value != null and player[property] != value:
+		changed = true
+		player[property] = value
+	return changed
+	
 
 ## Returns player state, introduce the player id to query it!
 ## Returns an array as: [br]

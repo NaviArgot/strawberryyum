@@ -9,17 +9,19 @@ class PlayerProc:
 	var steps
 	var action
 	var count
+	var state
 	
-	func _init(x_, y_, dir_, steps_, state_) -> void:
-		reset(x_, y_, dir_, steps_, state_)
+	func _init(x_, y_, dir_, steps_, action_, state_) -> void:
+		reset(x_, y_, dir_, steps_, action_, state_)
 	
 	
-	func reset(x_, y_, dir_, steps_, action_) -> void:
+	func reset(x_, y_, dir_, steps_, action_, state_) -> void:
 		x = x_
 		y = y_
 		dir = dir_
 		steps = steps_
 		action = action_
+		state = state_
 		count = 0
 
 enum Actions {NONE, UP, DOWN, LEFT, RIGHT, DASH}
@@ -43,7 +45,7 @@ func _init (gamestate_) -> void:
 	# Initializes players action buffer
 	for id in self.gamestate.getPlayerIds():
 		self.playerActions[id] = Actions.NONE
-		self.playerProc[id] = PlayerProc.new(0, 0, 0, 0, 0)
+		self.playerProc[id] = PlayerProc.new(0, 0, 0, 0, 0, 0)
 
 
 func queueAction (playerId: int, action: Actions):
@@ -57,6 +59,7 @@ func perform ():
 	var steps: int
 	var state: Array
 	var action: Actions
+	var playerState: GameState.PlayerState.States
 	# Initialize the data structure to perform the simulation
 	for id in ids:
 		steps = 0
@@ -65,22 +68,27 @@ func perform ():
 		direction = state[3]
 		match action:
 			Actions.UP:
+				playerState = GameState.PlayerState.States.MOVING
 				direction = GameState.PlayerState.Dir.UP
 				steps = 1
 			Actions.RIGHT:
+				playerState = GameState.PlayerState.States.MOVING
 				direction = GameState.PlayerState.Dir.RIGHT
 				steps = 1
 			Actions.DOWN:
+				playerState = GameState.PlayerState.States.MOVING
 				direction = GameState.PlayerState.Dir.DOWN
 				steps = 1
 			Actions.LEFT:
+				playerState = GameState.PlayerState.States.MOVING
 				direction = GameState.PlayerState.Dir.LEFT
 				steps = 1
 			Actions.DASH:
+				playerState = GameState.PlayerState.States.DASH
 				direction = state[3]
 				steps = state[5]
 				
-		self.playerProc[id].reset(state[1], state[2], direction, steps, action)
+		self.playerProc[id].reset(state[1], state[2], direction, steps, action, playerState)
 		self.playerActions[id] = Actions.NONE
 	# Perform the simulation
 	_simulate()
@@ -134,7 +142,7 @@ func _updateState():
 		var newFront: int = state[6]
 		# Update face value
 		for i in player.steps:
-			print("Face %d front %d" % [newFace, newFront])
+			#print("Face %d front %d" % [newFace, newFront])
 			var value = DieSim.turnDie(newFace, newFront, player.dir)
 			newFace = value[0]
 			newFront = value[1]
@@ -143,7 +151,7 @@ func _updateState():
 			player.x,
 			player.y,
 			player.dir,
-			null,
+			player.state,
 			newFace,
 			newFront
 		)
