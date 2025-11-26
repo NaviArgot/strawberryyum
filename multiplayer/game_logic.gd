@@ -59,7 +59,7 @@ func perform ():
 	var steps: int
 	var state: Array
 	var action: Actions
-	var playerState: GameState.PlayerState.States
+	var playerState := GameState.PlayerState.States.IDLE
 	# Initialize the data structure to perform the simulation
 	for id in ids:
 		steps = 0

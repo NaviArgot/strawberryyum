@@ -22,7 +22,7 @@ func _init(gamestate_) -> void:
 	self.gamestate.state_changed.connect(_on_state_changed)
 
 func _on_state_changed(id, x, y, dir, state, face, front):
-	print("X: %d Y: %d Dir: %d State: %d" % [x, y, dir, state])
+	#print("X: %d Y: %d Dir: %d State: %d" % [x, y, dir, state])
 	self.visuals[id].animateState(0.1, x, y, dir, state, face, front)
 	self.visuals[id].setFace(face)
-	print("STATE CHANGED %d" % [id])
+	print("ID: %d STATE CHANGED %d" % [id, state])
