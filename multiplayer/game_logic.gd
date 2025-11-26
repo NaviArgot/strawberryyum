@@ -59,13 +59,14 @@ func perform ():
 	var steps: int
 	var state: Array
 	var action: Actions
-	var playerState := GameState.PlayerState.States.IDLE
+	var playerState : GameState.PlayerState.States
 	# Initialize the data structure to perform the simulation
 	for id in ids:
 		steps = 0
 		state = self.gamestate.getPlayerState(id)
 		action = self.playerActions[id]
 		direction = state[3]
+		playerState = GameState.PlayerState.States.IDLE
 		match action:
 			Actions.UP:
 				playerState = GameState.PlayerState.States.MOVING
