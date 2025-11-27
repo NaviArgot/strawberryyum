@@ -29,7 +29,7 @@ func _receiveInput ():
 	if Input.is_action_pressed("move_up"):
 		self.gamelogic.queueAction(
 			self.playerIds[0],
-			GameLogic.Actions.UP
+			GameLogic.Actions.DOWN
 		)
 	elif Input.is_action_pressed("move_left"):
 		self.gamelogic.queueAction(
@@ -39,7 +39,7 @@ func _receiveInput ():
 	elif Input.is_action_pressed("move_down"):
 		self.gamelogic.queueAction(
 			self.playerIds[0],
-			GameLogic.Actions.DOWN
+			GameLogic.Actions.UP
 		)
 	elif Input.is_action_pressed("move_right"):
 		self.gamelogic.queueAction(

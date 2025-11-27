@@ -6,7 +6,12 @@ signal state_changed(id, x, y, dir, state, face, front)
 
 # Signal stuff when changes
 class PlayerState:
-	enum Dir {UP, RIGHT, DOWN, LEFT}
+	enum Dir {
+		UP = DieSim.NORTH,
+		DOWN = DieSim.SOUTH,
+		RIGHT = DieSim.EAST,
+		LEFT = DieSim.WEST,
+	}
 	enum States {IDLE, MOVING, DASH, CRASH, DEAD}
 	var id: int
 	var x: int

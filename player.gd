@@ -12,14 +12,22 @@ func setPos(x, y):
 	currPos = Vector3(x, 0, y)
 	position = currPos
 
-func setFace(face):
-	$DebugData.text = "%d" % [face]
+func setDebug(face, front, state):
+	const STATES = {
+		GameState.PlayerState.States.IDLE: "IDLE",
+		GameState.PlayerState.States.MOVING: "MOVING",
+		GameState.PlayerState.States.DASH: "DASH",
+		GameState.PlayerState.States.DEAD: "DEAD",
+		GameState.PlayerState.States.CRASH: "CRASH",
+	}
+	$DebugData.text = "F%d f%d\n%s" % [face, front, STATES[state]]
 
 
 func animateState(duration, x, y, dir, state, face, front):
 	var steps = abs(snappedi(currPos.x, 1) - x + snappedi(currPos.z, 1) - y)
 	if tween and state != GameState.PlayerState.States.IDLE:
 		_onFinishCallback.call()
+		_onFinishCallback = _doNothing
 		tween.kill()
 		tween = null
 	match state:
@@ -27,7 +35,7 @@ func animateState(duration, x, y, dir, state, face, front):
 			print("IDLE")
 		GameState.PlayerState.States.MOVING:
 			print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
-			_animateMove(duration, x, y, 1, dir)
+			_animateMove(duration, x, y, steps, dir)
 		GameState.PlayerState.States.DASH:
 			_animateMove(duration, x, y, steps, dir)
 			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
@@ -98,3 +106,7 @@ func _onFinish (endPos, endRot):
 	position = endPos
 	_setRotation(currRot)
 	print("FINISH")
+
+func _doNothing() :
+	print("NOTHING")
+	pass

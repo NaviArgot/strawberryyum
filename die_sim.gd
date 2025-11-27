@@ -2,6 +2,8 @@ extends Object
 
 class_name DieSim
 
+enum {NORTH = 2, SOUTH = 0, EAST = 3, WEST = 1}
+
 static var transitions = {
 	1: {
 		0: {'face': 2, 'addToFront': 0},
@@ -13,7 +15,7 @@ static var transitions = {
 		0: {'face': 3, 'addToFront': 0},
 		1: {'face': 5, 'addToFront': 1},
 		2: {'face': 1, 'addToFront': 0},
-		3: {'face': 6, 'addToFront': 1}
+		3: {'face': 6, 'addToFront': 3}
 	},
 	3: {
 		0: {'face': 4, 'addToFront': 0},
@@ -25,12 +27,12 @@ static var transitions = {
 		0: {'face': 1, 'addToFront': 0},
 		1: {'face': 5, 'addToFront': 3},
 		2: {'face': 3, 'addToFront': 0},
-		3: {'face': 6, 'addToFront': 3}
+		3: {'face': 6, 'addToFront': 1}
 	},
 	5: {
-		0: {'face': 2, 'addToFront': 1},
+		0: {'face': 2, 'addToFront': 3},
 		1: {'face': 3, 'addToFront': 2},
-		2: {'face': 4, 'addToFront': 3},
+		2: {'face': 4, 'addToFront': 1},
 		3: {'face': 1, 'addToFront': 0}
 	},
 	6: {

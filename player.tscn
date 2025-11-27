@@ -7,7 +7,7 @@
 script = ExtResource("1_4flbx")
 
 [node name="DebugData" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.111672, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5012165, 0)
 billboard = 1
 text = "Habibi"
 font_size = 100
