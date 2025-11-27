@@ -7,6 +7,8 @@ var _onFinishCallback: Callable
 
 var currPos: Vector3
 var currRot: Basis
+var face: int
+var front: int
 
 func setPos(x, y):
 	currPos = Vector3(x, 0, y)
@@ -23,7 +25,7 @@ func setDebug(face, front, state):
 	$DebugData.text = "F%d f%d\n%s" % [face, front, STATES[state]]
 
 
-func animateState(duration, x, y, dir, state, face, front):
+func animateState(duration, x, y, dir, state, newFace, newFront):
 	var steps = abs(snappedi(currPos.x, 1) - x + snappedi(currPos.z, 1) - y)
 	if tween and state != GameState.PlayerState.States.IDLE:
 		_onFinishCallback.call()
@@ -35,29 +37,20 @@ func animateState(duration, x, y, dir, state, face, front):
 			print("IDLE")
 		GameState.PlayerState.States.MOVING:
 			print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
-			_animateMove(duration, x, y, steps, dir)
+			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 		GameState.PlayerState.States.DASH:
-			_animateMove(duration, x, y, steps, dir)
+			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
 		GameState.PlayerState.States.DEAD:
 			pass
 		
 
-func _animateMove (duration, x, y, steps, dir):
+func _animateMove (duration, x, y, steps, dir, newFace, newFront):
 	if steps < 1: return
-	var axis: Vector3 = Vector3(1.0, 0.0, 0.0)
-	match dir:
-		GameState.PlayerState.Dir.UP:
-			axis = Vector3(1.0, 0.0, 0.0)
-		GameState.PlayerState.Dir.DOWN:
-			axis = Vector3(-1.0, 0.0, 0.0)
-		GameState.PlayerState.Dir.LEFT:
-			axis = Vector3(0.0, 0.0, 1.0)
-		GameState.PlayerState.Dir.RIGHT:
-			axis = Vector3(0.0, 0.0, -1.0)
-	var baseRot =  $Mesh.transform.basis.orthonormalized()
 	var startRot: Basis
 	var endRot: Basis
+	var dieState: Array = [face, front]
+	var nextDieState: Array
 	var startPos = position
 	var endPos = Vector3(x, 0.0, y)
 	# The rotation animation can be fragmented so a subtween is necessary
@@ -65,10 +58,16 @@ func _animateMove (duration, x, y, steps, dir):
 	rotSubtween.set_ease(Tween.EASE_IN)
 	rotSubtween.set_trans(Tween.TRANS_CUBIC)
 	for i in steps:
-		startRot = Basis(axis, (PI/2) * i) * baseRot
-		endRot = Basis(axis, (PI/2) * (i+1)) * baseRot
+		nextDieState = DieSim.turnDie(dieState[0], dieState[1], dir)
+		startRot = DieRotations.getTrans("%d%d" % dieState)
+		endRot = DieRotations.getTrans("%d%d" % nextDieState)
 		rotSubtween.tween_method(_rotate.bind(startRot, endRot), 0.0, 1.0, duration/steps)
-	_onFinishCallback = _onFinish.bind(endPos, endRot)
+	_onFinishCallback = _onFinish.bind(
+			endPos,
+			DieRotations.getTrans("%d%d" % [newFace, newFront]),
+			newFace,
+			newFront
+		)
 	# Resumes the creation of main tween
 	tween = create_tween()
 	tween.set_parallel()
@@ -81,7 +80,8 @@ func _animateMove (duration, x, y, steps, dir):
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	face = 1
+	front = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -100,10 +100,12 @@ func _move(weight, start, end):
 func _setRotation(rot: Basis):
 	$Mesh.rotation = rot.get_euler()
 
-func _onFinish (endPos, endRot):
+func _onFinish (endPos, endRot, newFace, newFront):
 	currRot = endRot
 	currPos = endPos
 	position = endPos
+	face = newFace
+	front = newFront
 	_setRotation(currRot)
 	print("FINISH")
 
