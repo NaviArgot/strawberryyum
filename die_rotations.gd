@@ -12,7 +12,7 @@ static func getTrans(faceFront: String):
 static func _initialize():
 	trans = {}
 	var key = "%d%d" % [1, 0]
-	var rot = Basis(Vector3.UP, 0.0)
+	var rot = Basis.from_euler(Vector3(-PI/2, -PI/2, 0))
 	_traverse(key, 1, 0, rot)
 	
 

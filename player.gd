@@ -82,6 +82,7 @@ func _animateMove (duration, x, y, steps, dir, newFace, newFront):
 func _ready() -> void:
 	face = 1
 	front = 0
+	$Mesh.rotation = DieRotations.getTrans("10").get_euler()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -15,7 +15,7 @@ func _ready() -> void:
 	self.playerIds = []
 	self.controllerToPlayer = {}
 	for i in 2:
-		var id = self.gamestate.createPlayer(0,0,0)
+		var id = self.gamestate.createPlayer(i,i,0)
 		self.playerIds.push_back(id)
 	self.gamelogic = GameLogic.new(self.gamestate)
 	self.puppeteer = Puppeteer.new(self.gamestate)
