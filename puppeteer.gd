@@ -25,4 +25,4 @@ func _on_state_changed(id, x, y, dir, state, face, front):
 	#print("X: %d Y: %d Dir: %d State: %d" % [x, y, dir, state])
 	print("ID: %d STATE CHANGED %d" % [id, state])
 	self.visuals[id].setDebug(face, front, state)
-	self.visuals[id].animateState(0.1, x, y, dir, state, face, front)
+	self.visuals[id].animateState(0.2, x, y, dir, state, face, front)

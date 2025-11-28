@@ -124,6 +124,7 @@ func _simulate ():
 						target.count = 0
 						target.x += self.moveTrans[player.dir][0]
 						target.y += self.moveTrans[player.dir][1]
+						target.state = GameState.PlayerState.States.PUSHED
 				# If it's not dashing stop the player
 				else:
 					player.state = GameState.PlayerState.States.IDLE

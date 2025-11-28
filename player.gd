@@ -21,6 +21,7 @@ func setDebug(face, front, state):
 		GameState.PlayerState.States.DASH: "DASH",
 		GameState.PlayerState.States.DEAD: "DEAD",
 		GameState.PlayerState.States.CRASH: "CRASH",
+		GameState.PlayerState.States.PUSHED: "PUSHED",
 	}
 	$DebugData.text = "F%d f%d\n%s" % [face, front, STATES[state]]
 
@@ -41,9 +42,10 @@ func animateState(duration, x, y, dir, state, newFace, newFront):
 		GameState.PlayerState.States.DASH:
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
+		GameState.PlayerState.States.PUSHED:
+			_animatePush(duration, x, y, newFace, newFront)
 		GameState.PlayerState.States.DEAD:
 			pass
-		
 
 func _animateMove (duration, x, y, steps, dir, newFace, newFront):
 	if steps < 1: return
@@ -76,7 +78,22 @@ func _animateMove (duration, x, y, steps, dir, newFace, newFront):
 	tween.tween_method(_move.bind(startPos, endPos), 0.0, 1.0, duration)
 	tween.tween_subtween(rotSubtween)
 	tween.chain().tween_callback(_onFinishCallback)
-	
+
+func _animatePush(duration, x, y, newFace, newFront):
+	var startPos = position
+	var endPos = Vector3(x, 0.0, y)
+	_onFinishCallback = _onFinish.bind(
+			endPos,
+			DieRotations.getTrans("%d%d" % [newFace, newFront]),
+			newFace,
+			newFront
+		)
+	tween = create_tween()
+	tween.set_parallel()
+	tween.set_ease(Tween.EASE_IN)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_method(_move.bind(startPos, endPos), 0.0, 1.0, duration)
+	tween.chain().tween_callback(_onFinishCallback)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

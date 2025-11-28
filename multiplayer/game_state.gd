@@ -12,7 +12,7 @@ class PlayerState:
 		RIGHT = DieSim.EAST,
 		LEFT = DieSim.WEST,
 	}
-	enum States {IDLE, MOVING, DASH, CRASH, DEAD}
+	enum States {IDLE, MOVING, DASH, CRASH, PUSHED, DEAD}
 	var id: int
 	var x: int
 	var y: int
