@@ -7,22 +7,46 @@ class PlayerProc:
 	var y
 	var dir
 	var steps
-	var action
 	var count
 	var state
+	var front
+	var face
 	
-	func _init(x_, y_, dir_, steps_, action_, state_) -> void:
-		reset(x_, y_, dir_, steps_, action_, state_)
+	func _init(x_, y_, dir_, steps_, state_, face_ = 1, front_ = 1) -> void:
+		reset(x_, y_, dir_, steps_, state_, face_, front_)
 	
 	
-	func reset(x_, y_, dir_, steps_, action_, state_) -> void:
+	func reset(x_, y_, dir_, steps_, state_, face_, front_) -> void:
 		x = x_
 		y = y_
 		dir = dir_
 		steps = steps_
-		action = action_
 		state = state_
+		face = face_
+		front = front_
 		count = 0
+
+class PlayerAction:
+	var command: Actions
+	var dir: GameState.PlayerState.Dir
+	var steps: int
+	
+	func _init(
+		command_: Actions,
+		dir_: GameState.PlayerState.Dir,
+		steps_
+	) -> void:
+		reset(command_, dir_, steps_)
+	
+	func reset(
+		command_: Actions,
+		dir_: GameState.PlayerState.Dir,
+		steps_: int
+	) -> void:
+		command = command_
+		dir = dir_
+		steps = steps_
+	
 
 enum Actions {NONE, UP, DOWN, LEFT, RIGHT, DASH}
 const moveTrans = {
@@ -33,64 +57,88 @@ const moveTrans = {
 }
 
 
+var collisionMap: CollisionMap
 var gamestate : GameState
 var playerActions: Dictionary
 var playerProc : Dictionary
 
-func _init (gamestate_) -> void:
+func _init (gamestate_, collisionMap_) -> void:
 	# Expects an initialized gamestate
+	self.collisionMap = collisionMap_
 	self.gamestate = gamestate_
 	self.playerActions = {}
 	self.playerProc = {}
 	# Initializes players action buffer
 	for id in self.gamestate.getPlayerIds():
-		self.playerActions[id] = Actions.NONE
+		self.playerActions[id] = PlayerAction.new(
+			Actions.NONE,
+			GameState.PlayerState.Dir.UP,
+			0
+		)
 		self.playerProc[id] = PlayerProc.new(0, 0, 0, 0, 0, 0)
 
 
 func queueAction (playerId: int, action: Actions):
 	if not self.playerActions.has(playerId): return
-	self.playerActions[playerId] = action
-
+	var playerAction = self.playerActions[playerId]
+	match action:
+		Actions.UP:
+			playerAction.reset(
+				action,
+				GameState.PlayerState.Dir.UP,
+				1
+			)
+		Actions.RIGHT:
+			playerAction.reset(
+				action,
+				GameState.PlayerState.Dir.RIGHT,
+				1
+			)
+		Actions.DOWN:
+			playerAction.reset(
+				action,
+				GameState.PlayerState.Dir.DOWN,
+				1
+			)
+		Actions.LEFT:
+			playerAction.reset(
+				action,
+				GameState.PlayerState.Dir.LEFT,
+				1
+			)
+		Actions.DASH:
+			var state = self.gamestate.getPlayerState(playerId)
+			playerAction.reset(
+				action,
+				state[3],
+				state[5]
+			)
 
 func perform ():
 	var ids = self.playerActions.keys()
-	var direction: int = 0
 	var steps: int
 	var state: Array
-	var action: Actions
+	var playerAction: PlayerAction
 	var playerState : GameState.PlayerState.States
 	# Initialize the data structure to perform the simulation
 	for id in ids:
 		steps = 0
 		state = self.gamestate.getPlayerState(id)
-		action = self.playerActions[id]
-		direction = state[3]
+		playerAction = self.playerActions[id]
 		playerState = GameState.PlayerState.States.IDLE
-		match action:
-			Actions.UP:
-				playerState = GameState.PlayerState.States.MOVING
-				direction = GameState.PlayerState.Dir.UP
-				steps = 1
-			Actions.RIGHT:
-				playerState = GameState.PlayerState.States.MOVING
-				direction = GameState.PlayerState.Dir.RIGHT
-				steps = 1
-			Actions.DOWN:
-				playerState = GameState.PlayerState.States.MOVING
-				direction = GameState.PlayerState.Dir.DOWN
-				steps = 1
-			Actions.LEFT:
-				playerState = GameState.PlayerState.States.MOVING
-				direction = GameState.PlayerState.Dir.LEFT
-				steps = 1
-			Actions.DASH:
-				playerState = GameState.PlayerState.States.DASH
-				direction = state[3]
-				steps = state[5]
-				
-		self.playerProc[id].reset(state[1], state[2], direction, steps, action, playerState)
-		self.playerActions[id] = Actions.NONE
+		
+		self.playerProc[id].reset(
+			state[1],
+			state[2],
+			playerAction.dir,
+			playerActions.steps,
+			playerAction.dir,
+			playerState
+		)
+		self.playerActions[id].reset(
+			Actions.NONE,
+			playerAction.dir
+		)
 	# Perform the simulation
 	_simulate()
 	# Update state
@@ -105,7 +153,8 @@ func _simulate ():
 	while not noMoreMoves:
 		noMoreMoves = true
 		for player in self.playerProc.values():
-			if not (player.count < player.steps): continue
+			if not (player.count < player.steps) \
+			or player.state == GameState.PlayerState.States.DEAD: continue
 			noMoreMoves = false
 			nextX = player.x + self.moveTrans[player.dir][0]
 			nextY = player.y + self.moveTrans[player.dir][1]
@@ -131,7 +180,10 @@ func _simulate ():
 					player.steps = player.count
 					nextX = player.x
 					nextY = player.y
-			# TODO check for death conditions
+			if _pushedOut(player.x, player.y):
+				player.x = -1000
+				player.y = -1000
+				player.state = GameState.PlayerState.States.DEAD
 			# Update players position
 			player.x = nextX
 			player.y = nextY
@@ -165,3 +217,7 @@ func _collidesWith (nextX, nextY):
 		if player.x == nextX and player.y == nextY:
 			return id
 	return -1
+
+func _pushedOut (x, y):
+	if collisionMap.getValue(x, y) == 0: return true
+	return false

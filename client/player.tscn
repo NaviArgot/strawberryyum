@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dmmagp0lo3w6f"]
 
-[ext_resource type="Script" uid="uid://cliynvs74op82" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://cliynvs74op82" path="res://client/player.gd" id="1_4flbx"]
 [ext_resource type="PackedScene" uid="uid://cwg6qu1qkakeb" path="res://assets/berrycube.glb" id="2_onrkg"]
 
 [node name="Player" type="Node3D"]

@@ -5,6 +5,7 @@ var playerIds: Array[int]
 var controllerToPlayer: Dictionary[int, int]
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
+var collisionMap: CollisionMap
 
 var counter
 
@@ -17,7 +18,7 @@ func _ready() -> void:
 	for i in 2:
 		var id = self.gamestate.createPlayer(i,i,0)
 		self.playerIds.push_back(id)
-	self.gamelogic = GameLogic.new(self.gamestate)
+	self.gamelogic = GameLogic.new(self.gamestate, CollisionMap.new())
 	self.puppeteer = Puppeteer.new(self.gamestate)
 	add_child(self.puppeteer)
 
@@ -25,7 +26,7 @@ func _receiveInput ():
 	if counter > 0:
 		counter -= 1
 		return
-	counter = 3
+	counter = 5
 	if Input.is_action_pressed("move_up"):
 		self.gamelogic.queueAction(
 			self.playerIds[0],

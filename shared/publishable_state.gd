@@ -1,6 +1,6 @@
 extends Object
 
-class_name GameState
+class_name PublishableState
 
 signal state_changed(id, x, y, dir, state, face, front)
 
@@ -85,6 +85,7 @@ func _updateState (player, property, value) -> bool:
 func getPlayerState(id):
 	var p = self.players[id]
 	return [p.id, p.x, p.y, p.dir, p.state, p.face, p.front]
+
 
 func print():
 	print("CURRENT STATE")
