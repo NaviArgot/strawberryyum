@@ -73,6 +73,7 @@ func _preparePlayerState ():
 		if player.state == STATE.DEAD:
 			player.steps = 0
 			player.action = ACTION.NONE
+			player.changed = false
 			return
 		player.changed = false
 		player.count = 0
@@ -145,13 +146,12 @@ func _movePlayer (id, dir: Constants.DIR):
 func _checkForDeath ():
 	for player in self.playerStates.values():
 		if self.collisionMap.getValue(player.x, player.y) == 0:
-			print("PLAYER DIED: ")
 			player.state = STATE.DEAD
 
 func _publishState():
 	for id in self.playerStates.keys():
 		var player = self.playerStates[id]
-		var anim: PublishableState.ANIM
+		var anim = _getAnimType(id)
 		if player.changed:
 			self.pubstate.publishState(
 				id,
@@ -161,9 +161,18 @@ func _publishState():
 				player.steps,
 				player.face,
 				player.front,
-				PublishableState.ANIM.MOVE,
+				anim,
 				0
 			)
+
+func _getAnimType (id):
+	var player = self.playerStates[id]
+	var anim: PublishableState.ANIM
+	anim = PublishableState.ANIM.MOVE
+	if player.state == STATE.DEAD:
+		anim = PublishableState.ANIM.DEATH
+	return anim
+	
 
 func _collidesWithPlayer (nextX, nextY):
 	for id in self.playerStates.keys():
