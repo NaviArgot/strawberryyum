@@ -2,12 +2,14 @@ extends Object
 
 class_name CollisionMap
 
+var origin: Vector2i
 var width: int
 var height: int
 var collisionMap: Array
 
-func _init() -> void:
+func _init(origin_ = Vector2i(0, 0)) -> void:
 	# Load map from JSON file
+	origin = origin_
 	width = 8
 	height = 8
 	collisionMap = [
@@ -23,6 +25,8 @@ func _init() -> void:
 	
 
 func getValue(x, y):
-	if x < 0 or x > width or y < 0 or y > height: return 0
-	var i = y * width + x
+	var tx = x - origin.x
+	var ty = y - origin.y
+	if tx < 0 or tx > width or ty < 0 or ty > height: return 0
+	var i = ty * width + tx
 	return collisionMap[i]

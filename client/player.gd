@@ -14,37 +14,37 @@ func setPos(x, y):
 	currPos = Vector3(x, 0, y)
 	position = currPos
 
-func setDebug(face, front, state):
-	const STATES = {
-		GameState.PlayerState.States.IDLE: "IDLE",
-		GameState.PlayerState.States.MOVING: "MOVING",
-		GameState.PlayerState.States.DASH: "DASH",
-		GameState.PlayerState.States.DEAD: "DEAD",
-		GameState.PlayerState.States.CRASH: "CRASH",
-		GameState.PlayerState.States.PUSHED: "PUSHED",
+func setDebug(face_, front_, anim_):
+	const ANIMTYPE = {
+		PublishableState.ANIM.IDLE: "IDLE",
+		PublishableState.ANIM.MOVE: "MOVE",
+		PublishableState.ANIM.DASH: "DASH",
+		PublishableState.ANIM.DEATH: "DEATH",
+		PublishableState.ANIM.CRASH: "CRASH",
+		PublishableState.ANIM.PUSHED: "PUSHED",
 	}
-	$DebugData.text = "F%d f%d\n%s" % [face, front, STATES[state]]
+	$DebugData.text = "F%d f%d\n%s" % [face_, front_, ANIMTYPE[anim_]]
 
 
-func animateState(duration, x, y, dir, state, newFace, newFront):
+func animateState(duration, x, y, dir, anim, newFace, newFront):
 	var steps = abs(snappedi(currPos.x, 1) - x + snappedi(currPos.z, 1) - y)
-	if tween and state != GameState.PlayerState.States.IDLE:
+	if tween and anim != PublishableState.ANIM.IDLE:
 		_onFinishCallback.call()
 		_onFinishCallback = _doNothing
 		tween.kill()
 		tween = null
-	match state:
-		GameState.PlayerState.States.IDLE:
+	match anim:
+		PublishableState.ANIM.IDLE:
 			print("IDLE")
-		GameState.PlayerState.States.MOVING:
+		PublishableState.ANIM.MOVE:
 			print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
-		GameState.PlayerState.States.DASH:
+		PublishableState.ANIM.DASH:
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
-		GameState.PlayerState.States.PUSHED:
+		PublishableState.ANIM.PUSHED:
 			_animatePush(duration, x, y, newFace, newFront)
-		GameState.PlayerState.States.DEAD:
+		PublishableState.ANIM.DEATH:
 			pass
 
 func _animateMove (duration, x, y, steps, dir, newFace, newFront):

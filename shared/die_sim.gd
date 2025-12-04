@@ -2,7 +2,12 @@ extends Object
 
 class_name DieSim
 
-enum {NORTH = 2, SOUTH = 0, EAST = 3, WEST = 1}
+const mappings = {
+	Constants.DIR.UP: 2,
+	Constants.DIR.DOWN: 0,
+	Constants.DIR.RIGHT: 3,
+	Constants.DIR.LEFT: 1,
+}
 
 static var transitions = {
 	1: {
@@ -44,8 +49,9 @@ static var transitions = {
 }
 
 
-static func turnDie (currFace: int, currFront: int, direction: int):
-	var targetEdge := (currFront + direction) % 4
+static func turnDie (currFace: int, currFront: int, direction: Constants.DIR):
+	var dir = mappings[direction]
+	var targetEdge = (currFront + dir) % 4
 	var nextFace = transitions[currFace][targetEdge].face
 	var nextFront = (currFront + transitions[currFace][targetEdge].addToFront) % 4
 	return [nextFace, nextFront]

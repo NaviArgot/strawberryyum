@@ -2,15 +2,27 @@ extends Object
 
 class_name GameLogic
 
-class PlayerProc:
+enum ACTION {NONE, UP, DOWN, LEFT, RIGHT, DASH}
+enum STATE {MOVING, DASHING, PUSHED, DEAD}
+
+const moveTrans = {
+	Constants.DIR.UP: [0,1],
+	Constants.DIR.LEFT: [-1,0],
+	Constants.DIR.DOWN: [0,-1],
+	Constants.DIR.RIGHT: [1,0],
+}
+
+class PlayerState:
 	var x
 	var y
 	var dir
 	var steps
 	var count
 	var state
+	var action
 	var front
 	var face
+	var changed
 	
 	func _init(x_, y_, dir_, steps_, state_, face_ = 1, front_ = 1) -> void:
 		reset(x_, y_, dir_, steps_, state_, face_, front_)
@@ -26,198 +38,138 @@ class PlayerProc:
 		front = front_
 		count = 0
 
-class PlayerAction:
-	var command: Actions
-	var dir: GameState.PlayerState.Dir
-	var steps: int
-	
-	func _init(
-		command_: Actions,
-		dir_: GameState.PlayerState.Dir,
-		steps_
-	) -> void:
-		reset(command_, dir_, steps_)
-	
-	func reset(
-		command_: Actions,
-		dir_: GameState.PlayerState.Dir,
-		steps_: int
-	) -> void:
-		command = command_
-		dir = dir_
-		steps = steps_
-	
-
-enum Actions {NONE, UP, DOWN, LEFT, RIGHT, DASH}
-const moveTrans = {
-	GameState.PlayerState.Dir.UP: [0,1],
-	GameState.PlayerState.Dir.LEFT: [-1,0],
-	GameState.PlayerState.Dir.DOWN: [0,-1],
-	GameState.PlayerState.Dir.RIGHT: [1,0],
-}
-
-
 var collisionMap: CollisionMap
-var gamestate : GameState
+var pubstate : PublishableState
 var playerActions: Dictionary
-var playerProc : Dictionary
+var playerStates : Dictionary
 
-func _init (gamestate_, collisionMap_) -> void:
+func _init (playerIDs, pubstate_, collisionMap_) -> void:
 	# Expects an initialized gamestate
-	self.collisionMap = collisionMap_
-	self.gamestate = gamestate_
-	self.playerActions = {}
-	self.playerProc = {}
+	collisionMap = collisionMap_
+	pubstate = pubstate_
+	playerActions = {}
+	playerStates = {}
 	# Initializes players action buffer
-	for id in self.gamestate.getPlayerIds():
-		self.playerActions[id] = PlayerAction.new(
-			Actions.NONE,
-			GameState.PlayerState.Dir.UP,
-			0
-		)
-		self.playerProc[id] = PlayerProc.new(0, 0, 0, 0, 0, 0)
+	for id in playerIDs:
+		playerActions[id] = ACTION.NONE
+		playerStates[id] = PlayerState.new(0, 0, 0, 0, STATE.MOVING)
 
 
-func queueAction (playerId: int, action: Actions):
+func queueAction (playerId: int, action: ACTION):
 	if not self.playerActions.has(playerId): return
-	var playerAction = self.playerActions[playerId]
-	match action:
-		Actions.UP:
-			playerAction.reset(
-				action,
-				GameState.PlayerState.Dir.UP,
-				1
-			)
-		Actions.RIGHT:
-			playerAction.reset(
-				action,
-				GameState.PlayerState.Dir.RIGHT,
-				1
-			)
-		Actions.DOWN:
-			playerAction.reset(
-				action,
-				GameState.PlayerState.Dir.DOWN,
-				1
-			)
-		Actions.LEFT:
-			playerAction.reset(
-				action,
-				GameState.PlayerState.Dir.LEFT,
-				1
-			)
-		Actions.DASH:
-			var state = self.gamestate.getPlayerState(playerId)
-			playerAction.reset(
-				action,
-				state[3],
-				state[5]
-			)
+	self.playerActions[playerId] = action
 
 func perform ():
-	var ids = self.playerActions.keys()
-	var steps: int
-	var state: Array
-	var playerAction: PlayerAction
-	var playerState : GameState.PlayerState.States
-	# Initialize the data structure to perform the simulation
-	for id in ids:
-		steps = 0
-		state = self.gamestate.getPlayerState(id)
-		playerAction = self.playerActions[id]
-		playerState = GameState.PlayerState.States.IDLE
-		
-		self.playerProc[id].reset(
-			state[1],
-			state[2],
-			playerAction.dir,
-			playerActions.steps,
-			playerAction.dir,
-			playerState
-		)
-		self.playerActions[id].reset(
-			Actions.NONE,
-			playerAction.dir
-		)
-	# Perform the simulation
+	_preparePlayerState()
 	_simulate()
-	# Update state
-	_updateState()
+	_checkForDeath()
+	_publishState()
 	return
 
+func _preparePlayerState ():
+	var ids = self.playerActions.keys()
+	for id in ids:
+		var player = playerStates[id]
+		if player.state == STATE.DEAD:
+			player.steps = 0
+			player.action = ACTION.NONE
+			return
+		player.changed = false
+		player.count = 0
+		match self.playerActions[id]:
+			ACTION.NONE:
+				player.steps = 0
+			ACTION.UP:
+				player.dir = Constants.DIR.UP
+				player.steps = 1
+				player.action = ACTION.UP
+			ACTION.DOWN:
+				player.dir = Constants.DIR.DOWN
+				player.steps = 1
+				player.action = ACTION.DOWN
+			ACTION.LEFT:
+				player.dir = Constants.DIR.LEFT
+				player.steps = 1
+				player.action = ACTION.LEFT
+			ACTION.RIGHT:
+				player.dir = Constants.DIR.RIGHT
+				player.steps = 1
+				player.action = ACTION.RIGHT
+			ACTION.DASH:
+				player.steps = player.face
+				player.action = ACTION.DASH
+		self.playerActions[id] = ACTION.NONE
+
 func _simulate ():
+	var player : PlayerState
 	var noMoreMoves: bool = false
-	var nextX: int
-	var nextY: int
-	var collision: int
 	while not noMoreMoves:
 		noMoreMoves = true
-		for player in self.playerProc.values():
-			if not (player.count < player.steps) \
-			or player.state == GameState.PlayerState.States.DEAD: continue
-			noMoreMoves = false
-			nextX = player.x + self.moveTrans[player.dir][0]
-			nextY = player.y + self.moveTrans[player.dir][1]
-			collision = _collidesWith(nextX, nextY)
-			# If players collide
-			if collision != -1:
-				var target = self.playerProc[collision]
-				if player.action == Actions.DASH:
-					# Both players are dashing, stop them both
-					if target.action == Actions.DASH:
-						player.steps = player.count
-						target.steps = target.count
-						# TODO play hit sound + animation or something
-					# Otherwise push the target
-					else:
-						target.count = 0
-						target.x += self.moveTrans[player.dir][0]
-						target.y += self.moveTrans[player.dir][1]
-						target.state = GameState.PlayerState.States.PUSHED
-				# If it's not dashing stop the player
+		for id in self.playerStates.keys():
+			player = self.playerStates[id]
+			if player.count < player.steps:
+				noMoreMoves = false
+				if player.action == ACTION.DASH:
+					_pushPlayer(id, player.dir)
 				else:
-					player.state = GameState.PlayerState.States.IDLE
-					player.steps = player.count
-					nextX = player.x
-					nextY = player.y
-			if _pushedOut(player.x, player.y):
-				player.x = -1000
-				player.y = -1000
-				player.state = GameState.PlayerState.States.DEAD
-			# Update players position
-			player.x = nextX
-			player.y = nextY
-			player.count += 1
+					_movePlayer(id, player.dir)
+				player.count += 1
 
-func _updateState():
-	for id in self.playerProc.keys():
-		var player = self.playerProc[id]
-		var state = self.gamestate.getPlayerState(id)
-		var newFace: int = state[5]
-		var newFront: int = state[6]
-		# Update face value
-		for i in player.steps:
-			#print("Face %d front %d" % [newFace, newFront])
-			var value = DieSim.turnDie(newFace, newFront, player.dir)
-			newFace = value[0]
-			newFront = value[1]
-		self.gamestate.setPlayerState(
-			id,
-			player.x,
-			player.y,
-			player.dir,
-			player.state,
-			newFace,
-			newFront
-		)
+func _pushPlayer (id, dir: Constants.DIR):
+	var player = self.playerStates[id]
+	var targetX = player.x + self.moveTrans[dir][0]
+	var targetY = player.y + self.moveTrans[dir][1]
+	var collision = _collidesWithPlayer(targetX, targetY)
+	if collision != -1 and \
+	self.playerStates[collision].state != STATE.DASHING:
+		_pushPlayer(collision, dir)
+	_movePlayer(id, dir)
 
-func _collidesWith (nextX, nextY):
-	for id in self.playerProc.keys():
-		var player = self.playerProc[id]
-		if player.x == nextX and player.y == nextY:
+func _movePlayer (id, dir: Constants.DIR):
+	var moved = false
+	var player = self.playerStates[id]
+	var targetX = player.x + self.moveTrans[dir][0]
+	var targetY = player.y + self.moveTrans[dir][1]
+	var collision = _collidesWithPlayer(targetX, targetY)
+	if collision == -1:
+		player.x = targetX
+		player.y = targetY
+		player.dir = dir
+		var newDie = DieSim.turnDie(player.face, player.front, dir)
+		player.face = newDie[0]
+		player.front = newDie[1]
+		player.changed = true
+		moved = true
+	return moved
+
+func _checkForDeath ():
+	for player in self.playerStates.values():
+		if self.collisionMap.getValue(player.x, player.y) == 0:
+			print("PLAYER DIED: ")
+			player.state = STATE.DEAD
+
+func _publishState():
+	for id in self.playerStates.keys():
+		var player = self.playerStates[id]
+		var anim: PublishableState.ANIM
+		if player.changed:
+			self.pubstate.publishState(
+				id,
+				player.x,
+				player.y,
+				player.dir,
+				player.steps,
+				player.face,
+				player.front,
+				PublishableState.ANIM.MOVE,
+				0
+			)
+
+func _collidesWithPlayer (nextX, nextY):
+	for id in self.playerStates.keys():
+		var player = self.playerStates[id]
+		if player.x == nextX \
+			and player.y == nextY \
+			and player.state != STATE.DEAD:
 			return id
 	return -1
-
-func _pushedOut (x, y):
-	if collisionMap.getValue(x, y) == 0: return true
-	return false

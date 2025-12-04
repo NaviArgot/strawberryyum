@@ -18,12 +18,17 @@ static func _initialize():
 
 static func _traverse(key: String, face: int, front: int, rot: Basis,):
 	if key in trans: return
-	var dirs = [DieSim.NORTH, DieSim.SOUTH, DieSim.EAST, DieSim.WEST]
+	var dirs = [
+		Constants.DIR.UP,
+		Constants.DIR.DOWN,
+		Constants.DIR.RIGHT,
+		Constants.DIR.LEFT
+	]
 	var axes = [
-		Vector3(1.0, 0.0, 0.0), # NORTH
-		Vector3(-1.0, 0.0, 0.0), # SOUTH
-		Vector3(0.0, 0.0, -1.0), #EAST
-		Vector3(0.0, 0.0, 1.0) #WEST
+		Vector3(1.0, 0.0, 0.0), # UP
+		Vector3(-1.0, 0.0, 0.0), # DOWN
+		Vector3(0.0, 0.0, -1.0), # LEFT
+		Vector3(0.0, 0.0, 1.0) # RIGHT
 	]
 	var state: Array
 	var newkey: String
