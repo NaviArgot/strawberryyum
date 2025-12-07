@@ -10,6 +10,19 @@ var currRot: Basis
 var face: int
 var front: int
 
+func reset():
+	currPos = Vector3(0, 0, 0)
+	position = currPos
+	scale = Vector3(1.0, 1.0, 1.0)
+	face = 1
+	front = 1
+	_setRotation(DieRotations.getTrans("11"))
+	visible = true
+	$GPUParticles3D.emitting = false
+	_onFinishCallback = _doNothing
+	if tween: tween.kill()
+	tween = null
+
 func setPos(x, y):
 	currPos = Vector3(x, 0, y)
 	position = currPos
@@ -38,14 +51,17 @@ func animateState(duration, x, y, dir, anim, newFace, newFront):
 			print("IDLE")
 		PublishableState.ANIM.MOVE:
 			print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
+			playSound(SOUND.WALK)
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 		PublishableState.ANIM.DASH:
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
+			playSound(SOUND.DASH)
 			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
 		PublishableState.ANIM.PUSHED:
 			_animatePush(duration, x, y, newFace, newFront)
 		PublishableState.ANIM.DEATH:
 			_animateDeath(duration, x, y, steps, dir, newFace, newFront)
+			playSound(SOUND.DEATH)
 
 func _animateMove (duration, x, y, steps, dir, newFace, newFront):
 	if steps < 1: return
@@ -165,6 +181,17 @@ func _onFinishDeath (endPos, endRot, newFace, newFront):
 
 func _setRotation(rot: Basis):
 	$Mesh.rotation = rot.get_euler()
+
+
+enum SOUND {WALK, DASH, DEATH}
+func playSound (type: SOUND):
+	match type:
+		SOUND.WALK:
+			$WalkSFX.play()
+		SOUND.DASH:
+			$DashSFX.play()
+		SOUND.DEATH:
+			$DeathSFX.play()
 
 func _onFinish (endPos, endRot, newFace, newFront):
 	currRot = endRot

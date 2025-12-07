@@ -164,6 +164,7 @@ func _publishState():
 				anim,
 				0
 			)
+			player.changed  = false
 
 func _getAnimType (id):
 	var player = self.playerStates[id]
@@ -171,6 +172,8 @@ func _getAnimType (id):
 	anim = PublishableState.ANIM.MOVE
 	if player.state == STATE.DEAD:
 		anim = PublishableState.ANIM.DEATH
+	elif player.action == ACTION.DASH:
+		anim = PublishableState.ANIM.DASH
 	return anim
 	
 
@@ -182,3 +185,7 @@ func _collidesWithPlayer (nextX, nextY):
 			and player.state != STATE.DEAD:
 			return id
 	return -1
+
+func free() -> void:
+	for player in self.playerStates:
+		player.free()

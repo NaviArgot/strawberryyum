@@ -35,3 +35,7 @@ func _on_state_changed(
 	#print("ID: %d STATE CHANGED %d" % [id, anim])
 	self.visuals[id].setDebug(face, front, anim)
 	self.visuals[id].animateState(0.1, x, y, dir, anim, face, front)
+
+func reset():
+	for vis in self.visuals.values():
+		vis.reset()

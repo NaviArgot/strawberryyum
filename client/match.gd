@@ -6,6 +6,7 @@ var controllerToPlayer: Dictionary[int, int]
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
 var collisionMap: CollisionMap
+var debugMap: DebugMap
 
 var counter
 
@@ -15,15 +16,14 @@ func _ready() -> void:
 	self.pubstate = PublishableState.new()
 	self.playerIDs = []
 	self.controllerToPlayer = {}
+	self.collisionMap = CollisionMap.new(16, 20, Vector2i(-8, -10))
+	self.debugMap = DebugMap.new(self.collisionMap)
 	for i in 2:
 		self.playerIDs.push_back(i)
-	self.gamelogic = GameLogic.new(
-		self.playerIDs,
-		self.pubstate,
-		CollisionMap.new(Vector2i(-2, -2))
-	)
 	self.puppeteer = Puppeteer.new(self.playerIDs, self.pubstate)
+	_initGameLogic()
 	add_child(self.puppeteer)
+	add_child(self.debugMap)
 
 func _receiveInput ():
 	if counter > 0:
@@ -55,6 +55,18 @@ func _receiveInput ():
 			self.playerIDs[0],
 			GameLogic.ACTION.DASH
 		)
+	elif Input.is_action_pressed("debug_reset"):
+		_initGameLogic()
+		self.puppeteer.reset()
+		
+
+func _initGameLogic():
+	if self.gamelogic: self.gamelogic.free()
+	self.gamelogic = GameLogic.new(
+		self.playerIDs,
+		self.pubstate,
+		self.collisionMap
+	)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

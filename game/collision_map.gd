@@ -7,11 +7,11 @@ var width: int
 var height: int
 var collisionMap: Array
 
-func _init(origin_ = Vector2i(0, 0)) -> void:
+func _init(height_, width_, origin_ = Vector2i(0, 0)) -> void:
 	# Load map from JSON file
 	origin = origin_
-	width = 8
-	height = 8
+	width = height_
+	height = width_
 	collisionMap = [
 		0, 0, 0, 1, 1, 0, 0, 0,
 		0, 0, 1, 1, 1, 1, 0, 0,
@@ -29,4 +29,5 @@ func getValue(x, y):
 	var ty = y - origin.y
 	if tx < 0 or tx > width or ty < 0 or ty > height: return 0
 	var i = ty * width + tx
-	return collisionMap[i]
+	#return collisionMap[i]
+	return 1
