@@ -8,6 +8,7 @@ var puppeteer: Puppeteer
 var collisionMap: CollisionMap
 var debugMap: DebugMap
 
+
 var counter
 
 # Called when the node enters the scene tree for the first time.
@@ -16,14 +17,15 @@ func _ready() -> void:
 	self.pubstate = PublishableState.new()
 	self.playerIDs = []
 	self.controllerToPlayer = {}
-	self.collisionMap = CollisionMap.new(16, 20, Vector2i(-8, -10))
-	self.debugMap = DebugMap.new(self.collisionMap)
+	self.collisionMap = CollisionMap.new(8, 8, Vector2i(-4, -4))
+	self.debugMap = DebugMap.new($GameMap)
 	for i in 2:
 		self.playerIDs.push_back(i)
 	self.puppeteer = Puppeteer.new(self.playerIDs, self.pubstate)
 	_initGameLogic()
 	add_child(self.puppeteer)
-	add_child(self.debugMap)
+	#add_child(self.debugMap)
+	self.pubstate.state_changed.connect(_on_state_changed)
 
 func _receiveInput ():
 	if counter > 0:
@@ -65,7 +67,7 @@ func _initGameLogic():
 	self.gamelogic = GameLogic.new(
 		self.playerIDs,
 		self.pubstate,
-		self.collisionMap
+		$GameMap
 	)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -74,3 +76,17 @@ func _process(delta: float) -> void:
 	_receiveInput()
 	#self.gamestate.print()
 	
+
+func _on_state_changed(
+	id,
+	x,
+	y,
+	dir,
+	steps,
+	face,
+	front,
+	anim,
+	offsetAnim
+):
+	if id == 0:
+		$Camera3D.setTarget(Vector3(x, 0.0, y))

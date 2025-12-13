@@ -2,17 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwy4qavjwwav2"
-path.s3tc="res://.godot/imported/debugtex.png-46270827295fddfd7ff1ee620ef60d73.s3tc.ctex"
+uid="uid://4bvkjgl4gyu0"
+path.s3tc="res://.godot/imported/floor_chain_side_side.png-6a295c1e87b1eec3afabd9dade55e9c9.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
+generator_parameters={
+"md5": "3b8c85d8e626e6413497b282d13553cb"
+}
 
 [deps]
 
-source_file="res://assets/debugtex.png"
-dest_files=["res://.godot/imported/debugtex.png-46270827295fddfd7ff1ee620ef60d73.s3tc.ctex"]
+source_file="res://assets/chain/floor_chain_side_side.png"
+dest_files=["res://.godot/imported/floor_chain_side_side.png-6a295c1e87b1eec3afabd9dade55e9c9.s3tc.ctex"]
 
 [params]
 

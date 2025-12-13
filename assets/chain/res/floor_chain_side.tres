@@ -1,0 +1,41 @@
+[gd_resource type="ArrayMesh" load_steps=4 format=4 uid="uid://c1epm8qcxpfxh"]
+
+[ext_resource type="Texture2D" uid="uid://4bvkjgl4gyu0" path="res://assets/chain/floor_chain_side_side.png" id="1_dpx8y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bh04l"]
+resource_name = "Material.001"
+cull_mode = 2
+albedo_texture = ExtResource("1_dpx8y")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_k7j73"]
+_surfaces = [{
+"aabb": AABB(-1, -0.5, -1, 2, 0.5, 2),
+"format": 34896613377,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAACAAMAAAADAAQAAAAEAAUA"),
+"name": "Material.001",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAD//wAAAAAAAP////8AAP///////wAA/////wAAAAD//wAAAAAAAAAAAAAAAAAA")
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "floor_chain_side_Plane"
+_surfaces = [{
+"aabb": AABB(-1, -0.5, -1, 2, 0.5, 2),
+"attribute_data": PackedByteArray("tYAxgCOArv//////tf//f4mAKYCD/0KAgv+znYuAsp0="),
+"format": 34896613399,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAACAAMABAAFAAYABAAGAAcA"),
+"material": SubResource("StandardMaterial3D_bh04l"),
+"name": "Material.001",
+"primitive": 3,
+"uv_scale": Vector4(2.000753, 2, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAD//wAA/z8AAP//////P/////////8//////wAA/z8AAP//AAAAgP////8AAAaA//8AAAAABoAAAAAAAAAAgA8A939QANd/DwD3fxgAMYD/////////////////////")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_k7j73")

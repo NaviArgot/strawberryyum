@@ -1,0 +1,41 @@
+[gd_resource type="ArrayMesh" load_steps=4 format=4 uid="uid://ro8an8getb7a"]
+
+[ext_resource type="Texture2D" uid="uid://tucmvk1113ln" path="res://assets/chain/floor_chain_corner_corner.png" id="1_63xek"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y2yuc"]
+resource_name = "Material.001"
+cull_mode = 2
+albedo_texture = ExtResource("1_63xek")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_072s6"]
+_surfaces = [{
+"aabb": AABB(-1, -0.5, -1, 2, 0.5, 2),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAACAAMAAAADAAQAAAAEAAUAAQAAAAUAAQAFAAYA"),
+"name": "Material.001",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 7,
+"vertex_data": PackedByteArray("AAD//wAAAAAAAP////8AAP///////wAA/////wAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAP//AAA=")
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "floor_chain_corner_Plane"
+_surfaces = [{
+"aabb": AABB(-1, -0.5, -1, 2, 0.5, 2),
+"attribute_data": PackedByteArray("g4D/fyOArv//////tf//f1CArn9QgK7/Jp2u/yadrn/y//9//3//f/9/VJ3y/1Sd"),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAACAAMABAAFAAYABAAGAAcACAAJAAoACAAKAAsA"),
+"material": SubResource("StandardMaterial3D_y2yuc"),
+"name": "Material.001",
+"primitive": 3,
+"uv_scale": Vector4(2.000753, 2, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("AAD//wAA/z8AAP//////P/////////8//////wAA/z8AAP//AAD/P/////8AAP8///8AAAAA/z8AAAAAAAD/PwAA/////wAAAAD//wAAAAAAAAAAAAAAAAAAAAD//wAAKADrf1AA138oAOt/AAD/f/9//3//f/9//3//f/9//3//v/9//7//f/+//3//v/9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_072s6")

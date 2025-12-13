@@ -2,7 +2,6 @@ extends Object
 
 class_name GameLogic
 
-enum ACTION {NONE, UP, DOWN, LEFT, RIGHT, DASH}
 enum STATE {MOVING, DASHING, PUSHED, DEAD}
 
 const moveTrans = {
@@ -38,24 +37,24 @@ class PlayerState:
 		front = front_
 		count = 0
 
-var collisionMap: CollisionMap
+var gamemap: GameMap
 var pubstate : PublishableState
 var playerActions: Dictionary
 var playerStates : Dictionary
 
-func _init (playerIDs, pubstate_, collisionMap_) -> void:
+func _init (playerIDs, pubstate_, gamemap_) -> void:
 	# Expects an initialized gamestate
-	collisionMap = collisionMap_
+	gamemap = gamemap_
 	pubstate = pubstate_
 	playerActions = {}
 	playerStates = {}
 	# Initializes players action buffer
 	for id in playerIDs:
-		playerActions[id] = ACTION.NONE
+		playerActions[id] = Constants.ACTION.NONE
 		playerStates[id] = PlayerState.new(0, 0, 0, 0, STATE.MOVING)
 
 
-func queueAction (playerId: int, action: ACTION):
+func queueAction (playerId: int, action: Constants.ACTION):
 	if not self.playerActions.has(playerId): return
 	self.playerActions[playerId] = action
 
@@ -72,34 +71,34 @@ func _preparePlayerState ():
 		var player = playerStates[id]
 		if player.state == STATE.DEAD:
 			player.steps = 0
-			player.action = ACTION.NONE
+			player.action = Constants.ACTION.NONE
 			player.changed = false
 			return
 		player.changed = false
 		player.count = 0
 		match self.playerActions[id]:
-			ACTION.NONE:
+			Constants.ACTION.NONE:
 				player.steps = 0
-			ACTION.UP:
+			Constants.ACTION.UP:
 				player.dir = Constants.DIR.UP
 				player.steps = 1
-				player.action = ACTION.UP
-			ACTION.DOWN:
+				player.action = Constants.ACTION.UP
+			Constants.ACTION.DOWN:
 				player.dir = Constants.DIR.DOWN
 				player.steps = 1
-				player.action = ACTION.DOWN
-			ACTION.LEFT:
+				player.action = Constants.ACTION.DOWN
+			Constants.ACTION.LEFT:
 				player.dir = Constants.DIR.LEFT
 				player.steps = 1
-				player.action = ACTION.LEFT
-			ACTION.RIGHT:
+				player.action = Constants.ACTION.LEFT
+			Constants.ACTION.RIGHT:
 				player.dir = Constants.DIR.RIGHT
 				player.steps = 1
-				player.action = ACTION.RIGHT
-			ACTION.DASH:
+				player.action = Constants.ACTION.RIGHT
+			Constants.ACTION.DASH:
 				player.steps = player.face
-				player.action = ACTION.DASH
-		self.playerActions[id] = ACTION.NONE
+				player.action = Constants.ACTION.DASH
+		self.playerActions[id] = Constants.ACTION.NONE
 
 func _simulate ():
 	var player : PlayerState
@@ -110,7 +109,7 @@ func _simulate ():
 			player = self.playerStates[id]
 			if player.count < player.steps:
 				noMoreMoves = false
-				if player.action == ACTION.DASH:
+				if player.action == Constants.ACTION.DASH:
 					_pushPlayer(id, player.dir)
 				else:
 					_movePlayer(id, player.dir)
@@ -145,7 +144,7 @@ func _movePlayer (id, dir: Constants.DIR):
 
 func _checkForDeath ():
 	for player in self.playerStates.values():
-		if self.collisionMap.getValue(player.x, player.y) == 0:
+		if self.gamemap.getCellCollision(player.x, player.y) == 0:
 			player.state = STATE.DEAD
 
 func _publishState():
@@ -172,7 +171,7 @@ func _getAnimType (id):
 	anim = PublishableState.ANIM.MOVE
 	if player.state == STATE.DEAD:
 		anim = PublishableState.ANIM.DEATH
-	elif player.action == ACTION.DASH:
+	elif player.action == Constants.ACTION.DASH:
 		anim = PublishableState.ANIM.DASH
 	return anim
 	

@@ -27,7 +27,7 @@ func setPos(x, y):
 	currPos = Vector3(x, 0, y)
 	position = currPos
 
-func setDebug(face_, front_, anim_):
+func setDebug(x, y, face_, front_, anim_):
 	const ANIMTYPE = {
 		PublishableState.ANIM.IDLE: "IDLE",
 		PublishableState.ANIM.MOVE: "MOVE",
@@ -36,7 +36,13 @@ func setDebug(face_, front_, anim_):
 		PublishableState.ANIM.CRASH: "CRASH",
 		PublishableState.ANIM.PUSHED: "PUSHED",
 	}
-	$DebugData.text = "F%d f%d\n%s" % [face_, front_, ANIMTYPE[anim_]]
+	$DebugData.text = "F%d f%d\n%s x: %d y: %d" % [
+		face_,
+		front_,
+		ANIMTYPE[anim_],
+		currPos.x,
+		currPos.z
+	]
 
 
 func animateState(duration, x, y, dir, anim, newFace, newFront):
