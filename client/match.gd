@@ -7,7 +7,7 @@ var pubstate: PublishableState
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
 
-var nPlayers = 2
+var nPlayers = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -31,7 +31,8 @@ func _receiveInput ():
 	if Input.is_action_pressed("debug_reset"):
 		_initGameLogic()
 		puppeteer.reset()
-		
+	elif Input.is_action_pressed("debug_publish"):
+		gamelogic.forcePublish()
 
 func _initGameLogic():
 	if gamelogic: gamelogic.free()

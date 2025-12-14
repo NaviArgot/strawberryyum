@@ -82,11 +82,12 @@ func _preparePlayerState (delta):
 		var player := playerStates[id]
 		player.cooldown.update(delta)
 		if player.state == STATE.DEAD:
+			player.state = STATE.DEAD
 			player.cooldown.reset()
 			player.steps = 0
 			player.action = Constants.ACTION.NONE
 			player.changed = false
-			break
+			continue
 		# Resets player state in case of not receiving input or in cooldown
 		player.changed = false
 		player.count = 0
@@ -171,6 +172,12 @@ func _checkForDeath ():
 	for player in playerStates.values():
 		if gamemap.getCellCollision(player.x, player.y) == 0:
 			player.state = STATE.DEAD
+
+func forcePublish():
+	for id in playerIDs:
+		var player := playerStates[id]
+		player.changed = true
+	_publishState()
 
 func _publishState():
 	for id in playerStates.keys():

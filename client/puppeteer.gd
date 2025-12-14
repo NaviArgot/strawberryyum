@@ -31,9 +31,9 @@ func _on_state_changed(
 	anim,
 	offsetAnim
 ):
-	print("X: %d Y: %d Dir: %d Anim: %d" % [x, y, dir, anim])
+	print("ID: %d X: %d Y: %d Dir: %d Anim: %d" % [id, x, y, dir, anim])
 	#print("ID: %d STATE CHANGED %d" % [id, anim])
-	self.visuals[id].setDebug(x, y, face, front, anim)
+	self.visuals[id].setDebug(id, x, y, face, front, anim)
 	self.visuals[id].animateState(0.1, x, y, dir, anim, face, front)
 
 func reset():
