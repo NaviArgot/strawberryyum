@@ -1,80 +1,53 @@
 extends Node3D
 
-var pubstate: PublishableState
 var playerIDs: Array[int]
-var controllerToPlayer: Dictionary[int, int]
+var controllers: Array[Controller]
+var actionBuffer: ActionBuffer
+var pubstate: PublishableState
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
-var collisionMap: CollisionMap
-var debugMap: DebugMap
 
-
-var counter
+var nPlayers = 1
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	counter = 0
-	self.pubstate = PublishableState.new()
-	self.playerIDs = []
-	self.controllerToPlayer = {}
-	self.collisionMap = CollisionMap.new(8, 8, Vector2i(-4, -4))
-	self.debugMap = DebugMap.new($GameMap)
-	for i in 2:
-		self.playerIDs.push_back(i)
-	self.puppeteer = Puppeteer.new(self.playerIDs, self.pubstate)
+	playerIDs = []
+	for id in nPlayers: playerIDs.push_back(id)
+	actionBuffer = ActionBuffer.new(playerIDs)
+	controllers = []
+	for id in nPlayers:
+		if id == 0:
+			controllers.push_back(PlayerController.new(id, actionBuffer))
+		else:
+			controllers.push_back(AIController.new(id, actionBuffer, PerceivedState.new()))
+	pubstate = PublishableState.new()
+	puppeteer = Puppeteer.new(playerIDs, pubstate)
 	_initGameLogic()
-	add_child(self.puppeteer)
-	#add_child(self.debugMap)
-	self.pubstate.state_changed.connect(_on_state_changed)
+	add_child(puppeteer)
+	pubstate.state_changed.connect(_on_state_changed)
 
 func _receiveInput ():
-	if counter > 0:
-		counter -= 1
-		return
-	counter = 5
-	if Input.is_action_pressed("move_up"):
-		self.gamelogic.queueAction(
-			self.playerIDs[0],
-			GameLogic.ACTION.DOWN
-		)
-	elif Input.is_action_pressed("move_left"):
-		self.gamelogic.queueAction(
-			self.playerIDs[0],
-			GameLogic.ACTION.LEFT
-		)
-	elif Input.is_action_pressed("move_down"):
-		self.gamelogic.queueAction(
-			self.playerIDs[0],
-			GameLogic.ACTION.UP
-		)
-	elif Input.is_action_pressed("move_right"):
-		self.gamelogic.queueAction(
-			self.playerIDs[0],
-			GameLogic.ACTION.RIGHT
-		)
-	elif Input.is_action_pressed("dash"):
-		self.gamelogic.queueAction(
-			self.playerIDs[0],
-			GameLogic.ACTION.DASH
-		)
-	elif Input.is_action_pressed("debug_reset"):
+	if Input.is_action_pressed("debug_reset"):
 		_initGameLogic()
-		self.puppeteer.reset()
+		puppeteer.reset()
 		
 
 func _initGameLogic():
-	if self.gamelogic: self.gamelogic.free()
-	self.gamelogic = GameLogic.new(
-		self.playerIDs,
-		self.pubstate,
-		$GameMap
+	if gamelogic: gamelogic.free()
+	gamelogic = GameLogic.new(
+		playerIDs,
+		pubstate,
+		$GameMap,
+		actionBuffer
 	)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	self.gamelogic.perform()
+	for controller in controllers:
+		controller.perform()
+	gamelogic.perform(delta)
 	_receiveInput()
-	#self.gamestate.print()
+	#gamestate.print()
 	
 
 func _on_state_changed(

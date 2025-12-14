@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dy02neu6bcqu0" path="res://client/match.gd" id="1_7y1jj"]
 [ext_resource type="Script" uid="uid://b1xuud0i6awgs" path="res://client/moving_camera.gd" id="2_ix7t0"]
-[ext_resource type="PackedScene" uid="uid://dmmagp0lo3w6f" path="res://client/player.tscn" id="3_7sg6s"]
+[ext_resource type="PackedScene" uid="uid://dmmagp0lo3w6f" path="res://client/visuals/player.tscn" id="3_7sg6s"]
 [ext_resource type="MeshLibrary" uid="uid://cl3223tfx3rwt" path="res://assets/chain/floor_chain.tres" id="3_h1q33"]
 [ext_resource type="Script" uid="uid://5wnjp3avqsl4" path="res://shared/game_map.gd" id="4_ix7t0"]
 

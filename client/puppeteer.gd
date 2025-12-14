@@ -2,7 +2,7 @@ extends Node
 
 class_name Puppeteer
 
-var playerScene = preload("res://client/player.tscn")
+var playerScene = preload("res://client/visuals/player.tscn")
 
 var playerIDs: Array
 var pubstate: PublishableState
