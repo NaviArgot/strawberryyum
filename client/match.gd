@@ -7,7 +7,7 @@ var pubstate: PublishableState
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
 
-var nPlayers = 1
+var nPlayers = 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -16,6 +16,7 @@ func _ready() -> void:
 	actionBuffer = ActionBuffer.new(playerIDs)
 	controllers = []
 	for id in nPlayers:
+		print(id)
 		if id == 0:
 			controllers.push_back(PlayerController.new(id, actionBuffer))
 		else:

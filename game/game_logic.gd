@@ -27,8 +27,8 @@ class Cooldown:
 		move.reset()
 		dash.reset()
 
-const COOLDOWN_MOVE : float = 5.0
-const COOLDOWN_DASH : float = 3.0
+const COOLDOWN_MOVE : float = 0.1
+const COOLDOWN_DASH : float = 0.5
 
 class PlayerState:
 	var x : int
@@ -81,17 +81,18 @@ func _preparePlayerState (delta):
 	for id in playerIDs:
 		var player := playerStates[id]
 		player.cooldown.update(delta)
-		if id == 0:
-			print("READY: ", player.cooldown.move.amount)
 		if player.state == STATE.DEAD:
 			player.cooldown.reset()
 			player.steps = 0
 			player.action = Constants.ACTION.NONE
 			player.changed = false
-			return
+			break
+		# Resets player state in case of not receiving input or in cooldown
 		player.changed = false
 		player.count = 0
 		player.steps = 0
+		player.action = Constants.ACTION.NONE
+		# Initializes player in regards of input
 		match actionBuffer.getAction(id):
 			Constants.ACTION.UP:
 				if player.cooldown.move.isReady():
