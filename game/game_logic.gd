@@ -91,9 +91,8 @@ func _preparePlayerState (delta):
 			return
 		player.changed = false
 		player.count = 0
+		player.steps = 0
 		match actionBuffer.getAction(id):
-			Constants.ACTION.NONE:
-				player.steps = 0
 			Constants.ACTION.UP:
 				if player.cooldown.move.isReady():
 					player.dir = Constants.DIR.UP
