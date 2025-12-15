@@ -6,6 +6,7 @@ var actionBuffer: ActionBuffer
 var pubstate: PublishableState
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
+var perceivedState : PerceivedState
 
 var nPlayers = 5
 
@@ -14,18 +15,24 @@ func _ready() -> void:
 	playerIDs = []
 	for id in nPlayers: playerIDs.push_back(id)
 	actionBuffer = ActionBuffer.new(playerIDs)
+	pubstate = PublishableState.new()
+	perceivedState = PerceivedState.new(playerIDs, $GameMap, pubstate)
 	controllers = []
 	for id in nPlayers:
-		print(id)
 		if id == 0:
 			controllers.push_back(PlayerController.new(id, actionBuffer))
 		else:
-			controllers.push_back(AIController.new(id, actionBuffer, PerceivedState.new()))
-	pubstate = PublishableState.new()
+			controllers.push_back(
+				AIController.new(
+					id,
+					actionBuffer,
+					perceivedState
+				)
+			)
 	puppeteer = Puppeteer.new(playerIDs, pubstate)
 	_initGameLogic()
 	add_child(puppeteer)
-	pubstate.state_changed.connect(_on_state_changed)
+	pubstate.player_state_changed.connect(_on_player_state_changed)
 
 func _receiveInput ():
 	if Input.is_action_pressed("debug_reset"):
@@ -52,7 +59,7 @@ func _process(delta: float) -> void:
 	#gamestate.print()
 	
 
-func _on_state_changed(
+func _on_player_state_changed(
 	id,
 	x,
 	y,

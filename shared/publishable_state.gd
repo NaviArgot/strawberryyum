@@ -2,7 +2,7 @@ extends Object
 
 class_name PublishableState
 
-signal state_changed(
+signal player_state_changed(
 	id,
 	x,
 	y,
@@ -27,7 +27,7 @@ func publishState(
 		anim: ANIM,
 		offsetAnim: int
 	):
-		state_changed.emit(
+		player_state_changed.emit(
 			id,
 			x,
 			y,

@@ -9,18 +9,18 @@ var pubstate: PublishableState
 var visuals: Dictionary
 
 func _init(playerIDs_, pubstate_) -> void:
-	self.playerIDs = playerIDs_
-	self.pubstate = pubstate_
-	self.visuals = {}
+	playerIDs = playerIDs_
+	pubstate = pubstate_
+	visuals = {}
 	# Initializes data representation
-	for id in self.playerIDs:
+	for id in playerIDs:
 		var player = playerScene.instantiate()
-		self.visuals[id] = player
+		visuals[id] = player
 		# Don't forget to append your child to the tree!
 		add_child(player)
-	self.pubstate.state_changed.connect(_on_state_changed)
+	pubstate.player_state_changed.connect(_on_player_state_changed)
 
-func _on_state_changed(
+func _on_player_state_changed(
 	id,
 	x,
 	y,
@@ -33,9 +33,9 @@ func _on_state_changed(
 ):
 	print("ID: %d X: %d Y: %d Dir: %d Anim: %d" % [id, x, y, dir, anim])
 	#print("ID: %d STATE CHANGED %d" % [id, anim])
-	self.visuals[id].setDebug(id, x, y, face, front, anim)
-	self.visuals[id].animateState(0.1, x, y, dir, anim, face, front)
+	visuals[id].setDebug(id, x, y, face, front, anim)
+	visuals[id].animateState(0.1, x, y, dir, anim, face, front)
 
 func reset():
-	for vis in self.visuals.values():
+	for vis in visuals.values():
 		vis.reset()
