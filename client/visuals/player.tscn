@@ -40,11 +40,19 @@ emitting = false
 process_material = SubResource("ParticleProcessMaterial_rvduj")
 draw_pass_1 = SubResource("BoxMesh_rxdl8")
 
-[node name="WalkSFX" type="AudioStreamPlayer" parent="."]
+[node name="WalkSFX" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_4fdcg")
+attenuation_model = 1
+unit_size = 5.0
 
-[node name="DashSFX" type="AudioStreamPlayer" parent="."]
+[node name="DashSFX" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_jlson")
+attenuation_model = 1
+unit_size = 5.0
 
-[node name="DeathSFX" type="AudioStreamPlayer" parent="."]
+[node name="DeathSFX" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_c7dgk")
+attenuation_model = 1
+
+[node name="Listener" type="AudioListener3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.669632, 0)

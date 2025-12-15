@@ -18,6 +18,8 @@ func _init(playerIDs_, pubstate_) -> void:
 		visuals[id] = player
 		# Don't forget to append your child to the tree!
 		add_child(player)
+		if id == 0:
+			player.toggleListener()
 	pubstate.player_state_changed.connect(_on_player_state_changed)
 
 func _on_player_state_changed(

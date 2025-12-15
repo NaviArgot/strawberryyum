@@ -212,3 +212,7 @@ func _onFinish (endPos, endRot, newFace, newFront):
 func _doNothing() :
 	print("NOTHING")
 	pass
+
+func toggleListener():
+	$Listener.clear_current()
+	$Listener.make_current()
