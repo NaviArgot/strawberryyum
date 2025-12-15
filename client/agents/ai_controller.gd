@@ -7,7 +7,7 @@ const moveTrans = {
 	Constants.DIR.RIGHT: [1,0],
 }
 
-const MULTI_MOVE = 10
+const MULTI_MOVE = 20
 const MULTI_DASH = 5
 
 var id: int
@@ -39,27 +39,28 @@ func perform():
 		
 	# Add score w.r.t pythagorean distance
 	var targetID = perceivedState.findClosestPlayer(pos.x, pos.y)
-	var target = perceivedState.getPlayerPos(targetID)
-	var delta = Vector2(target.x - pos.x, target.y - pos.y)
-	delta = delta.normalized()
-	if delta.x > 0:
-		actionScore[Constants.ACTION.RIGHT] += int(abs(delta.x * MULTI_MOVE))
-	else:
-		actionScore[Constants.ACTION.LEFT] += int(abs(delta.x * MULTI_MOVE))
-	if delta.y > 0:
-		actionScore[Constants.ACTION.UP] += int(abs(delta.y * MULTI_MOVE))
-	else:
-		actionScore[Constants.ACTION.DOWN] += int(abs(delta.y * MULTI_MOVE))
-	# Dash score
-	var targetDir = Constants.DIR.UP
-	if abs(snappedi(delta.x,1)) == 1 and snappedi(delta.y, 1) == 0:
-		if snapped(delta.x, 1) > 0: targetDir = Constants.DIR.RIGHT
-		else: targetDir = Constants.DIR.LEFT
-	elif abs(snappedi(delta.y,1)) == 1 and snappedi(delta.x, 1) == 0:
-		if snapped(delta.y, 1) > 0: targetDir = Constants.DIR.UP
-		else: targetDir = Constants.DIR.DOWN
-	if targetDir == player.dir:
-		actionScore[Constants.ACTION.DASH] *= MULTI_DASH
+	if targetID != -1:
+		var target = perceivedState.getPlayerPos(targetID)
+		var delta = Vector2(target.x - pos.x, target.y - pos.y)
+		delta = delta.normalized()
+		if delta.x > 0:
+			actionScore[Constants.ACTION.RIGHT] += int(abs(delta.x * MULTI_MOVE))
+		else:
+			actionScore[Constants.ACTION.LEFT] += int(abs(delta.x * MULTI_MOVE))
+		if delta.y > 0:
+			actionScore[Constants.ACTION.UP] += int(abs(delta.y * MULTI_MOVE))
+		else:
+			actionScore[Constants.ACTION.DOWN] += int(abs(delta.y * MULTI_MOVE))
+		# Dash score
+		var targetDir = Constants.DIR.UP
+		if abs(snappedi(delta.x,1)) == 1 and snappedi(delta.y, 1) == 0:
+			if snapped(delta.x, 1) > 0: targetDir = Constants.DIR.RIGHT
+			else: targetDir = Constants.DIR.LEFT
+		elif abs(snappedi(delta.y,1)) == 1 and snappedi(delta.x, 1) == 0:
+			if snapped(delta.y, 1) > 0: targetDir = Constants.DIR.UP
+			else: targetDir = Constants.DIR.DOWN
+		if targetDir == player.dir:
+			actionScore[Constants.ACTION.DASH] *= MULTI_DASH
 	# Check for falls
 	for act in Constants.ACTION._MAX_INDEX_:
 		match act:

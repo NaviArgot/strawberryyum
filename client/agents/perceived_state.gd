@@ -27,7 +27,6 @@ func _init(playerIDs : Array[int], gamemap_ : GameMap, pubstate : PublishableSta
 	pubstate.player_state_changed.connect(_on_player_state_changed)
 
 func getPlayerPos(id : int) -> Vector2i:
-	if id == -1: return Vector2i(0,0)
 	return players[id].pos
 
 func findClosestPlayer(x: int, y: int) -> int:
