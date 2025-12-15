@@ -15,7 +15,6 @@ func setTarget (target_: Vector3):
 	time = 0.0
 	start = pos
 	target = target_
-	print("CHANFEDS")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

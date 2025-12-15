@@ -27,7 +27,7 @@ class Cooldown:
 		move.reset()
 		dash.reset()
 
-const COOLDOWN_MOVE : float = 0.1
+const COOLDOWN_MOVE : float = 0.2
 const COOLDOWN_DASH : float = 0.5
 
 class PlayerState:
@@ -43,7 +43,7 @@ class PlayerState:
 	var changed : bool
 	var cooldown : Cooldown
 	
-	func _init(x_, y_, dir_, steps_, state_, face_ = 1, front_ = 1) -> void:
+	func _init(x_, y_, dir_, steps_, state_, face_ = 1, front_ = 0) -> void:
 		x = x_
 		y = y_
 		dir = dir_
@@ -60,7 +60,17 @@ var pubstate : PublishableState
 var actionBuffer :  ActionBuffer
 var playerStates : Dictionary[int, PlayerState]
 
-func _init (playerIDs_, pubstate_, gamemap_, actionBuffer_) -> void:
+func _init (
+	playerIDs_ : Array[int],
+	spawnPoints_ : Array[Vector2i],
+	pubstate_ : PublishableState,
+	gamemap_ : GameMap,
+	actionBuffer_ : ActionBuffer
+) -> void:
+	assert(
+		playerIDs_.size() == spawnPoints_.size(),
+		"Amount of Spawn Points must be equal to amound of player IDs"
+	)
 	playerIDs = playerIDs_
 	gamemap = gamemap_
 	pubstate = pubstate_
@@ -68,7 +78,9 @@ func _init (playerIDs_, pubstate_, gamemap_, actionBuffer_) -> void:
 	playerStates = {}
 	# Initializes players action buffer
 	for id in playerIDs:
-		playerStates[id] = PlayerState.new(0, 0, 0, 0, STATE.MOVING)
+		var pos = spawnPoints_[id]
+		playerStates[id] = PlayerState.new(pos.x, pos.y, 0, 0, STATE.MOVING, 1, 0)
+	forcePublish()
 
 func perform (delta : float):
 	_preparePlayerState(delta)

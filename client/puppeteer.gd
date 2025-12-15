@@ -33,7 +33,7 @@ func _on_player_state_changed(
 	anim,
 	offsetAnim
 ):
-	print("ID: %d X: %d Y: %d Dir: %d Anim: %d" % [id, x, y, dir, anim])
+	#print("ID: %d X: %d Y: %d Dir: %d Anim: %d" % [id, x, y, dir, anim])
 	#print("ID: %d STATE CHANGED %d" % [id, anim])
 	visuals[id].setDebug(id, x, y, face, front, anim)
 	visuals[id].animateState(0.1, x, y, dir, anim, face, front)

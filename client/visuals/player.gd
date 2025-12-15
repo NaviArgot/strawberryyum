@@ -7,8 +7,8 @@ var _onFinishCallback: Callable
 
 var currPos: Vector3
 var currRot: Basis
-var face: int
-var front: int
+var face: int = 1
+var front: int = 0
 
 func reset():
 	currPos = Vector3(0, 0, 0)
@@ -41,8 +41,8 @@ func setDebug(id, x, y, face_, front_, anim_):
 		face_,
 		front_,
 		ANIMTYPE[anim_],
-		currPos.x,
-		currPos.z
+		x,
+		y
 	]
 
 
@@ -55,15 +55,16 @@ func animateState(duration, x, y, dir, anim, newFace, newFront):
 		tween = null
 	match anim:
 		PublishableState.ANIM.IDLE:
-			print("IDLE")
+			pass
+			#print("IDLE")
 		PublishableState.ANIM.MOVE:
-			print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
+			#print("MOVING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
 			playSound(SOUND.WALK)
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 		PublishableState.ANIM.DASH:
 			_animateMove(duration, x, y, steps, dir, newFace, newFront)
 			playSound(SOUND.DASH)
-			print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
+			#print("DASHING Dur: %f x: %d y: %d steps: %d dir: %d" % [duration, x, y, steps, dir])
 		PublishableState.ANIM.PUSHED:
 			_animatePush(duration, x, y, newFace, newFront)
 		PublishableState.ANIM.DEATH:
@@ -165,7 +166,7 @@ func _process(delta: float) -> void:
 func _rotate(weight, start: Basis, end: Basis):
 	var rot = start.slerp(end, weight)
 	_setRotation(rot)
-	#print("Weight: ", weight,"\nStart: ", start, "\nEnd: ", end, "\nUpdate: ", rot)
+	##print("Weight: ", weight,"\nStart: ", start, "\nEnd: ", end, "\nUpdate: ", rot)
 
 func _move(weight, start, end):
 	position = start.lerp(end, weight)
@@ -207,10 +208,10 @@ func _onFinish (endPos, endRot, newFace, newFront):
 	face = newFace
 	front = newFront
 	_setRotation(currRot)
-	print("FINISH")
+	#print("FINISH")
 
 func _doNothing() :
-	print("NOTHING")
+	#print("NOTHING")
 	pass
 
 func toggleListener():

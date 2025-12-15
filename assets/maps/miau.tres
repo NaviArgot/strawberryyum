@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="MapData" load_steps=2 format=3 uid="uid://bgoaxs30tcuk1"]
-
-[ext_resource type="Script" uid="uid://5wnjp3avqsl4" path="res://shared/game_map.gd" id="1_0g2vj"]
-
-[resource]
-script = ExtResource("1_0g2vj")

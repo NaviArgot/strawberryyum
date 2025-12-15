@@ -1,6 +1,7 @@
 class_name GameMap
 extends GridMap
 
+@export var spawnPoints: Array[Vector2i]
 @export var collisions: Dictionary [String, int]
 var _fastColl: Array [int]
 
@@ -24,6 +25,9 @@ func _computeFastCollisions():
 func getCellCollision(x: int, y: int):
 	var item = get_cell_item(Vector3i(x, 0, y))
 	return 0 if item == INVALID_CELL_ITEM else _fastColl[item]
+
+func getSpawnPoints():
+	return spawnPoints
 
 func print():
 	print(collisions)

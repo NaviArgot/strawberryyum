@@ -1,5 +1,9 @@
 extends Node3D
 
+const MAPS = [
+	preload("res://assets/maps/basic.tscn")
+]
+
 var playerIDs: Array[int]
 var controllers: Array[Controller]
 var actionBuffer: ActionBuffer
@@ -7,18 +11,22 @@ var pubstate: PublishableState
 var gamelogic: GameLogic
 var puppeteer: Puppeteer
 var perceivedState : PerceivedState
-
-var nPlayers = 5
+var map : Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	var mapTree = MAPS[0].instantiate()
+	map = mapTree.get_node("GameMap")
+	add_child(mapTree)
 	playerIDs = []
-	for id in nPlayers: playerIDs.push_back(id)
+	var spawnPoints = map.getSpawnPoints()
+	for id in spawnPoints.size():
+		playerIDs.push_back(id)
 	actionBuffer = ActionBuffer.new(playerIDs)
 	pubstate = PublishableState.new()
-	perceivedState = PerceivedState.new(playerIDs, $GameMap, pubstate)
+	perceivedState = PerceivedState.new(playerIDs, map, pubstate)
 	controllers = []
-	for id in nPlayers:
+	for id in playerIDs.size():
 		if id == 0:
 			controllers.push_back(PlayerController.new(id, actionBuffer))
 		else:
@@ -45,8 +53,9 @@ func _initGameLogic():
 	if gamelogic: gamelogic.free()
 	gamelogic = GameLogic.new(
 		playerIDs,
+		map.getSpawnPoints(),
 		pubstate,
-		$GameMap,
+		map,
 		actionBuffer
 	)
 

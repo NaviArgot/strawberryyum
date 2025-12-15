@@ -8,7 +8,7 @@ const moveTrans = {
 }
 
 const MULTI_MOVE = 20
-const MULTI_DASH = 10
+const MULTI_DASH = 40
 
 var id: int
 var actionBuffer: ActionBuffer
@@ -39,6 +39,7 @@ func perform():
 		
 	# Add score w.r.t pythagorean distance
 	var targetID = perceivedState.findClosestPlayer(pos.x, pos.y)
+	var pushSuccess = false
 	if targetID != -1:
 		var target = perceivedState.getPlayerPos(targetID)
 		var delta = Vector2(target.x - pos.x, target.y - pos.y)
@@ -60,6 +61,7 @@ func perform():
 			if snapped(delta.y, 1) > 0: targetDir = Constants.DIR.UP
 			else: targetDir = Constants.DIR.DOWN
 		if targetDir == player.dir:
+			pushSuccess = true
 			actionScore[Constants.ACTION.DASH] *= MULTI_DASH
 	# Check for falls
 	for act in Constants.ACTION._MAX_INDEX_:
@@ -77,8 +79,9 @@ func perform():
 				if _willFall(pos, Constants.DIR.RIGHT, 1):
 					actionScore[Constants.ACTION.RIGHT] = 0
 			Constants.ACTION.DASH:
-				if _willFall(pos, player.dir, player.face):
-					actionScore[Constants.ACTION.DASH] = 0
+				if not pushSuccess:
+					if _willFall(pos, player.dir, player.face):
+						actionScore[Constants.ACTION.DASH] = 0
 	var action = _weightedDecision()
 	#print(pos, actionScore, action)
 	actionBuffer.setAction(id, action)
