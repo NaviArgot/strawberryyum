@@ -135,7 +135,11 @@ func _simulate ():
 			player = playerStates[id]
 			if player.count < player.steps:
 				noMoreMoves = false
-				if player.action == Constants.ACTION.DASH:
+				var nextCol = gamemap.getCellCollision(
+					player.x + moveTrans[player.dir][0],
+					player.y + moveTrans[player.dir][1]
+				)
+				if player.action == Constants.ACTION.DASH and nextCol != 0:
 					_pushPlayer(id, player.dir)
 				else:
 					_movePlayer(id, player.dir)

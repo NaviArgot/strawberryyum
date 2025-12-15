@@ -8,7 +8,7 @@ const moveTrans = {
 }
 
 const MULTI_MOVE = 20
-const MULTI_DASH = 5
+const MULTI_DASH = 10
 
 var id: int
 var actionBuffer: ActionBuffer
@@ -33,7 +33,7 @@ func perform():
 	var pos = perceivedState.getPlayerPos(id)
 	# Initialize scores
 	for i in range(Constants.ACTION._MAX_INDEX_):
-		actionScore[i] = 1
+		actionScore[i] = 0
 		if i == Constants.ACTION.NONE:
 			actionScore[i] = 0
 		
