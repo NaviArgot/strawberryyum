@@ -33,7 +33,7 @@ func perform():
 	var pos = perceivedState.getPlayerPos(id)
 	# Initialize scores
 	for i in range(Constants.ACTION._MAX_INDEX_):
-		actionScore[i] = 0
+		actionScore[i] = 1
 		if i == Constants.ACTION.NONE:
 			actionScore[i] = 0
 		

@@ -135,6 +135,11 @@ func _simulate ():
 			player = playerStates[id]
 			if player.count < player.steps:
 				noMoreMoves = false
+				# CAUTION These lines were added to prevent the dasher from
+				# falling while pushing players. This shouldn't work but it does
+				# because the conditional defaults to move and this checks if
+				# there is a player in front, because it's there the pushed one,
+				# it stops the dasher.
 				var nextCol = gamemap.getCellCollision(
 					player.x + moveTrans[player.dir][0],
 					player.y + moveTrans[player.dir][1]
