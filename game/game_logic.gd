@@ -59,6 +59,7 @@ var gamemap: GameMap
 var pubstate : PublishableState
 var actionBuffer :  ActionBuffer
 var playerStates : Dictionary[int, PlayerState]
+var playersAlive : int
 
 func _init (
 	playerIDs_ : Array[int],
@@ -76,6 +77,7 @@ func _init (
 	pubstate = pubstate_
 	actionBuffer = actionBuffer_
 	playerStates = {}
+	playersAlive = playerIDs.size()
 	# Initializes players action buffer
 	for id in playerIDs:
 		var pos = spawnPoints_[id]
@@ -193,6 +195,7 @@ func _checkForDeath ():
 	for player in playerStates.values():
 		if gamemap.getCellCollision(player.x, player.y) == 0:
 			player.state = STATE.DEAD
+			playersAlive -= 1
 
 func forcePublish():
 	for id in playerIDs:

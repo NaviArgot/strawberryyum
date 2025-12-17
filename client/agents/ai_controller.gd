@@ -39,9 +39,8 @@ func perform():
 		
 	# Add score w.r.t pythagorean distance
 	var targetID = perceivedState.findClosestPlayer(pos.x, pos.y)
-	var pushSuccess = false
 	if targetID != -1:
-		var target = perceivedState.getPlayerPos(targetID)
+		var target = perceivedState.getPlayerPos(0)
 		var delta = Vector2(target.x - pos.x, target.y - pos.y)
 		delta = delta.normalized()
 		if delta.x > 0:
@@ -61,7 +60,6 @@ func perform():
 			if snapped(delta.y, 1) > 0: targetDir = Constants.DIR.UP
 			else: targetDir = Constants.DIR.DOWN
 		if targetDir == player.dir:
-			pushSuccess = true
 			actionScore[Constants.ACTION.DASH] *= MULTI_DASH
 	# Check for falls
 	for act in Constants.ACTION._MAX_INDEX_:
@@ -79,9 +77,8 @@ func perform():
 				if _willFall(pos, Constants.DIR.RIGHT, 1):
 					actionScore[Constants.ACTION.RIGHT] = 0
 			Constants.ACTION.DASH:
-				if not pushSuccess:
-					if _willFall(pos, player.dir, player.face):
-						actionScore[Constants.ACTION.DASH] = 0
+				if _willFall(pos, player.dir, player.face):
+					actionScore[Constants.ACTION.DASH] = 0
 	var action = _weightedDecision()
 	#print(pos, actionScore, action)
 	actionBuffer.setAction(id, action)

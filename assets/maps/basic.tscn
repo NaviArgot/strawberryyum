@@ -1,11 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://c0i6cjjud1vgm"]
+[gd_scene load_steps=8 format=3 uid="uid://c0i6cjjud1vgm"]
 
 [ext_resource type="MeshLibrary" uid="uid://cf60sdyylxgvt" path="res://assets/meshlibs/test.meshlib" id="1_bkbtg"]
 [ext_resource type="Script" uid="uid://5wnjp3avqsl4" path="res://shared/game_map.gd" id="2_7emch"]
+[ext_resource type="AudioStream" uid="uid://dex4kpp8u8vfw" path="res://assets/straw1.wav" id="3_7emch"]
+[ext_resource type="PackedScene" uid="uid://b877m376d7ylw" path="res://assets/beaker.glb" id="4_smf71"]
 
 [sub_resource type="Environment" id="Environment_bkbtg"]
 background_mode = 1
-background_color = Color(0.03365908, 0.07294769, 0.16568986, 1)
+background_color = Color(0.1221, 0.21912003, 0.33, 1)
+background_energy_multiplier = 0.1
+ambient_light_source = 1
+ambient_light_color = Color(0.47836274, 0.5002046, 0.79310346, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7emch"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_smf71"]
+albedo_color = Color(0.19109999, 0.21, 0.208425, 1)
+metallic = 0.25
+emission_enabled = true
 
 [node name="Node3D" type="Node3D"]
 
@@ -26,3 +38,22 @@ metadata/_custom_type_script = "uid://5wnjp3avqsl4"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_bkbtg")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_7emch")
+autoplay = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, -4, 0)
+mesh = SubResource("PlaneMesh_7emch")
+surface_material_override/0 = SubResource("StandardMaterial3D_smf71")
+
+[node name="beaker" parent="." instance=ExtResource("4_smf71")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 14.424091, -3.9921453, -10.49512)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.06663964, 0.9977771, 0, -0.9977771, -0.06663964, 0, 27.624323, -3.5916576)
+light_color = Color(0.81344324, 0.86266226, 0.9862395, 1)
+light_energy = 16.0
+spot_range = 47.71721
+spot_angle = 48.04717

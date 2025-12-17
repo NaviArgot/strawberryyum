@@ -1,22 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://4oouf7pjb2d0"]
+[gd_scene load_steps=9 format=3 uid="uid://4oouf7pjb2d0"]
 
 [ext_resource type="Script" uid="uid://dy02neu6bcqu0" path="res://client/match.gd" id="1_7y1jj"]
 [ext_resource type="Script" uid="uid://b1xuud0i6awgs" path="res://client/moving_camera.gd" id="2_ix7t0"]
 [ext_resource type="PackedScene" uid="uid://dmmagp0lo3w6f" path="res://client/visuals/player.tscn" id="3_7sg6s"]
-
-[sub_resource type="Environment" id="Environment_r2umd"]
-background_mode = 1
-background_color = Color(0.07489737, 0.056295447, 0.14301226, 1)
-
-[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_8rsav"]
+[ext_resource type="Script" uid="uid://day68jcncoyng" path="res://client/ui/timer_label.gd" id="4_h1q33"]
+[ext_resource type="Theme" uid="uid://bpxpfejmha335" path="res://client/ui/match.theme" id="4_wgubp"]
+[ext_resource type="Script" uid="uid://bthfhgixnwbig" path="res://client/timer.gd" id="5_ix7t0"]
+[ext_resource type="Texture2D" uid="uid://bp1fylswqxhlk" path="res://assets/move.png" id="7_f2hs6"]
+[ext_resource type="Texture2D" uid="uid://craawmiig21aj" path="res://assets/dash.png" id="8_hn2cy"]
 
 [node name="Match" type="Node3D"]
 script = ExtResource("1_7y1jj")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8660253, 0.49999997, 0, -0.49999997, 0.8660253, 0, 0, 0)
-visible = false
-projection = 1
 size = 14.713802
 script = ExtResource("2_ix7t0")
 speed = 2.0
@@ -25,10 +22,172 @@ transType = 1
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.43899855, 0.8984878, 0, -0.8984878, 0.43899855, 0, 34.004974, 7.331333)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_r2umd")
-camera_attributes = SubResource("CameraAttributesPractical_8rsav")
+visible = false
 
 [node name="Player" parent="." instance=ExtResource("3_7sg6s")]
 visible = false
+
+[node name="UI" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TimerLabel" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -129.0
+offset_bottom = 94.0
+grow_horizontal = 0
+theme = ExtResource("4_wgubp")
+theme_override_colors/font_shadow_color = Color(0.93, 0.074399985, 0.2883, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 2
+text = "20"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_h1q33")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+ignore_time_scale = true
+script = ExtResource("5_ix7t0")
+
+[node name="Title" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Title"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -333.5
+offset_right = 333.5
+offset_bottom = 160.0
+grow_horizontal = 2
+theme = ExtResource("4_wgubp")
+theme_override_font_sizes/font_size = 41
+text = "Strawberry Yummerz"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Press" type="Label" parent="Title"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -333.5
+offset_top = -80.0
+offset_right = 333.5
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_wgubp")
+theme_override_font_sizes/font_size = 21
+text = "Press [W] or [A] or [S] or [D] or [Space] to start!
+
+--- Be the last one to ascend ---"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="move" type="TextureRect" parent="Title"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -242.0
+offset_right = 259.47778
+grow_vertical = 0
+texture = ExtResource("7_f2hs6")
+
+[node name="dash" type="TextureRect" parent="Title"]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -212.0
+offset_top = -212.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("8_hn2cy")
+
+[node name="Retry" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Retry"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -112.5
+offset_top = -11.5
+offset_right = 112.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Y O U A R E N O T W O R T H Y"
+
+[node name="BG" type="Control" parent="Retry"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="Retry/BG"]
+show_behind_parent = true
+z_index = -4
+layout_mode = 0
+offset_right = 1150.0
+offset_bottom = 654.0
+color = Color(0, 0, 0, 0.5882353)
+
+[node name="TRY" type="Label" parent="Retry"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -144.0
+offset_top = -94.5
+offset_right = 144.0
+offset_bottom = 94.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_wgubp")
+text = "TRY AGAIN TO ASCEND"
+horizontal_alignment = 1
+vertical_alignment = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="RetryTimer" type="Timer" parent="."]
+one_shot = true
+ignore_time_scale = true
